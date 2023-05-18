@@ -24,8 +24,7 @@ public class TrashObjectAnchor : MonoBehaviour
 
         Debug.LogWarningFormat("OnTriggerEnter() {0} ", this.name );
         // Retreive the object to be collected if it exits
-        InteractiveItem interactive_item = other.GetComponent<InteractiveItem>();
-        
+        // InteractiveItem interative_item = other.GetComponent<InteractiveItem>();
         
         if (other.gameObject.tag == "trashball") {
             Debug.LogWarningFormat("Trash can inside if correct ", other.name );
