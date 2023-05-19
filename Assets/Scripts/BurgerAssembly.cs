@@ -4,9 +4,10 @@ using UnityEngine;
 /**
  * Snaps ingredients in order into a designated zone in burger box
  */
-// TODO refactor 
+// TODO refactor & annotate with comments 
 // TODO: create prefabs with 1) colliders 2) suitable rotation & scale 3) drag into ingredientPrefabs lists in Editor 
 // TODO: play error sound when released object is not an ingredient 
+// TODO: use tags than names & extract const strings 
 public class BurgerAssembly : MonoBehaviour
 {
     private readonly List<GameObject> _progress = new();
@@ -16,15 +17,19 @@ public class BurgerAssembly : MonoBehaviour
     private bool _isStackable;
     private Grabbable _grabbable;
 
+    private AudioSource _audioSource;
+
     // "BottomBun", "GrilledSteak", "TomatoSlice", "LettuceSlice", "Cheese", "TopBun" prefabs with BoxColliders for stacking ingredients
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
     public GameObject burgerBase;
+    public AudioClip errorSound;
 
     private void Start()
     {
         _progress.Add(burgerBase);
+        _audioSource.GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -56,7 +61,12 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Stack()
     {
-        if (!_isStackable || !_grabbable.is_available()) return;
+        if (!_grabbable.is_available()) return;
+        if (!_isStackable)
+        {
+            _audioSource.PlayOneShot(errorSound);
+            return;
+        }
 
         // Instantiate the ingredient prefab &
         // Position relative to the last stacked ingredient 
