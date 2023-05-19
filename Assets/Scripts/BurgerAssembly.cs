@@ -12,10 +12,10 @@ public class BurgerAssembly : MonoBehaviour
 {
     private readonly List<GameObject> _progress = new();
 
-    // next ingredient that entered snap zone
-    private GameObject _nextIngredient;
-    private bool _isStackable;
-    private Grabbable _grabbable;
+    private bool _isInSnapZone;
+    private GameObject _itemInZone;
+    private Grabbable _itemGrabbable;
+    private bool _isIngredient;
 
     private AudioSource _audioSource;
 
@@ -28,7 +28,7 @@ public class BurgerAssembly : MonoBehaviour
     private void Start()
     {
         _progress.Add(burgerBase);
-        _audioSource.GetComponent<AudioSource>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -36,19 +36,19 @@ public class BurgerAssembly : MonoBehaviour
         // Player can stack any item that is an ingredient
         // and is expected to place the right ones in order
         // to make a burger and fulfill the order
-        if (!ingredientPrefabs.Exists(prefab
-                => other.gameObject.name == prefab.name)) return;
 
-        _nextIngredient = other.gameObject;
-        _grabbable = _nextIngredient.GetComponent<Grabbable>();
-        _isStackable = true;
+        _isInSnapZone = true;
+        _isIngredient = ingredientPrefabs.Exists(prefab
+            => other.gameObject.name == prefab.name);
+        _itemInZone = other.gameObject;
+        _itemGrabbable = _itemInZone.GetComponent<Grabbable>();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (ReferenceEquals(other.gameObject, _nextIngredient))
+        if (ReferenceEquals(other.gameObject, _itemInZone))
         {
-            _isStackable = false;
+            _isInSnapZone = false;
         }
     }
 
@@ -60,28 +60,30 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Stack()
     {
-        if (!_grabbable.is_available()) return;
-        if (!_isStackable)
+        if (!_isInSnapZone || !_itemGrabbable.is_available()) return;
+
+        if (!_isIngredient)
         {
             _audioSource.Play();
-            return;
+        }
+        else
+        {
+            // Instantiate the ingredient prefab &
+            // Position relative to the last stacked ingredient 
+            GameObject prefab = ingredientPrefabs.Find(prefab
+                => prefab.name == _itemInZone.name);
+            GameObject lastIngredient = _progress[^1];
+            BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
+            Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);
+            Destroy(_itemInZone);
+            GameObject stackedIngredient = Instantiate(prefab, position, prefab.transform.rotation);
+            // Make ingredients move together as a burger
+            stackedIngredient.transform.SetParent(burgerBase.transform);
+
+            _progress.Add(stackedIngredient);
         }
 
-        // Instantiate the ingredient prefab &
-        // Position relative to the last stacked ingredient 
-        GameObject prefab = ingredientPrefabs.Find(prefab
-            => prefab.name == _nextIngredient.name);
-        GameObject lastIngredient = _progress[^1];
-        BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
-        Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);
-        Destroy(_nextIngredient);
-        GameObject stackedIngredient = Instantiate(prefab, position, prefab.transform.rotation);
-        // Make ingredients move together as a burger
-        stackedIngredient.transform.SetParent(burgerBase.transform);
-
-        _progress.Add(stackedIngredient);
-
-        // Reset for next ingredient 
-        _isStackable = false;
+        // Reset for next object
+        _isInSnapZone = false;
     }
 }
