@@ -75,9 +75,6 @@ public class BurgerAssembly : MonoBehaviour
         GameObject lastIngredient = _progress[^1];
         BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
         Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);
-        Debug.LogWarningFormat("{0} last", lastIngredient.name);
-        Debug.LogWarningFormat("{0} center", boxCollider.bounds.center);
-        Debug.LogWarningFormat("{0} height/2", boxCollider.bounds.size.y / 2);
         Destroy(_nextIngredient);
         GameObject stackedIngredient = Instantiate(prefab, position, prefab.transform.rotation);
         // Make ingredients move together as a burger
