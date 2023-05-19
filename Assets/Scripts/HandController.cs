@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public class HandController : MonoBehaviour {
 
@@ -82,10 +83,6 @@ public class HandController : MonoBehaviour {
         }
         else
         {
-            //if (CurrentHighlighted == highlightedObject)
-            //{
-            //    CurrentHighlighted = null;
-            //}
             lineRenderer.enabled = false;
         }
     }
@@ -121,6 +118,15 @@ public class HandController : MonoBehaviour {
                     magnetic_anchors_in_the_scene[i].ResetHighlight();
                     //magnetic_anchors_in_the_scene[i].AttachToHand();
                     object_grasped = magnetic_anchors_in_the_scene[i].GetComponent<Grabbable>();
+                    if (magnetic_anchors_in_the_scene[i].CompareTag("MainButton"))
+					{
+                        SceneManager.LoadScene("MainScene");
+						break;
+                    } else if (magnetic_anchors_in_the_scene[i].CompareTag("TutorialButton"))
+					{
+                        SceneManager.LoadScene("TutorialScene");
+						break;
+                    }
                     object_grasped.attach_to(this);
                     
                     break;
@@ -167,10 +173,16 @@ public class HandController : MonoBehaviour {
 			// Release the object
 			object_grasped.detach_from( this );
 			MagneticGrab magneticGrab = object_grasped.GetComponent<MagneticGrab>();
-			if (magneticGrab != null ) { magneticGrab.ResetHighlight(); }
-			// Move the object -- yiyuan
-			// print_velocity();
-			Vector3 linearVelocity = get_velocity();
+			if (magneticGrab != null ) { 
+				magneticGrab.ResetHighlight();
+				lineRenderer.enabled = false;
+			
+				magneticGrab.enabled = false;
+                
+            }
+            // Move the object -- yiyuan
+            // print_velocity();
+            Vector3 linearVelocity = get_velocity();
             object_grasped.throw_to(linearVelocity);
             //object_grasped.detach_from(this);
             // print speed when throwing
