@@ -69,6 +69,8 @@ public class Grabbable : MonoBehaviour
         {
            //StartCoroutine(Regenerate());
             GameObject newItem = Instantiate(gameObject, originalPosition, originalRotation, originalParent);
+            MagneticGrab magneticGrab = transform.GetComponent<MagneticGrab>();
+            if ( magneticGrab != null ) { magneticGrab.ResetHighlight(); }
 
             // Get the Grabbable component of the new item
             Grabbable newGrabbable = newItem.GetComponent<Grabbable>();
