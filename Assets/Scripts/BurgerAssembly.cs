@@ -24,7 +24,6 @@ public class BurgerAssembly : MonoBehaviour
 
     // Base position for stacking ingredients
     public GameObject burgerBase;
-    public AudioClip errorSound;
 
     private void Start()
     {
@@ -38,7 +37,7 @@ public class BurgerAssembly : MonoBehaviour
         // and is expected to place the right ones in order
         // to make a burger and fulfill the order
         if (!ingredientPrefabs.Exists(prefab
-                => other.gameObject.name + "Prefab" == prefab.name)) return;
+                => other.gameObject.name == prefab.name)) return;
 
         _nextIngredient = other.gameObject;
         _grabbable = _nextIngredient.GetComponent<Grabbable>();
@@ -64,14 +63,14 @@ public class BurgerAssembly : MonoBehaviour
         if (!_grabbable.is_available()) return;
         if (!_isStackable)
         {
-            _audioSource.PlayOneShot(errorSound);
+            _audioSource.Play();
             return;
         }
 
         // Instantiate the ingredient prefab &
         // Position relative to the last stacked ingredient 
         GameObject prefab = ingredientPrefabs.Find(prefab
-            => prefab.name == _nextIngredient.name + "Prefab");
+            => prefab.name == _nextIngredient.name);
         GameObject lastIngredient = _progress[^1];
         BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
         Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);

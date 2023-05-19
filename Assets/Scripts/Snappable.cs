@@ -1,22 +1,24 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // TODO refactor & rename
 /**
  * Snaps an object into place when released inside the snap zone
+ * Pre-requisites:
+ * 1) trigger collider 
  */
 public class Snappable : MonoBehaviour
 {
-    // 1) has same tag as object 2) has trigger collider 
-    public GameObject prefab; 
+    public GameObject snapObjectPrefab; // same tag as snap object 
 
-    private GameObject _snapObject;
+    private GameObject _snapObject; // grabbable
     private Grabbable _grabbable; // detects release
     private bool _isSnappable;
     private bool _isSnapped; // snaps only once
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(prefab.tag))
+        if (other.CompareTag(snapObjectPrefab.tag))
         {
             _snapObject = other.gameObject;
             _grabbable = _snapObject.GetComponent<Grabbable>();
@@ -26,7 +28,7 @@ public class Snappable : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(prefab.tag))
+        if (other.CompareTag(snapObjectPrefab.tag))
         {
             _isSnappable = false;
         }
@@ -44,7 +46,7 @@ public class Snappable : MonoBehaviour
 
         Destroy(_snapObject);
         Transform cachedTransform = transform;
-        Instantiate(prefab, cachedTransform.position, cachedTransform.rotation, cachedTransform);
+        Instantiate(snapObjectPrefab, cachedTransform.position, cachedTransform.rotation, cachedTransform);
 
         _isSnapped = true;
     }
