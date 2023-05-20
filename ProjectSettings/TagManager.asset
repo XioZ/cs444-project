@@ -8,6 +8,8 @@ TagManager:
   - knife
   - pan
   - PlayerHand
+  - MainButton
+  - TutorialButton
   layers:
   - Default
   - TransparentFX

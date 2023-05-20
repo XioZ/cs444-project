@@ -70,6 +70,8 @@ public class Grabbable : MonoBehaviour
         {
            //StartCoroutine(Regenerate());
             GameObject newItem = Instantiate(gameObject, originalPosition, originalRotation, originalParent);
+            MagneticGrab magneticGrab = transform.GetComponent<MagneticGrab>();
+            if ( magneticGrab != null ) { magneticGrab.ResetHighlight(); }
 
             // Get the Grabbable component of the new item
             Grabbable newGrabbable = newItem.GetComponent<Grabbable>();
@@ -107,6 +109,11 @@ public class Grabbable : MonoBehaviour
         {
             isRegenerating = false;
             //StartCoroutine(Regenerate());
+        }
+        MagneticGrab magneticGrab = transform.GetComponent<MagneticGrab>();
+        if (magneticGrab != null) { 
+            //magneticGrab.enabled = false;
+            //magneticGrab.GetComponent<LineRenderer>().enabled = false;
         }
         // Make sure that the right hand controller ask for the release
         if (_handController != handController) return;
