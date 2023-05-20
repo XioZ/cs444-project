@@ -10,6 +10,11 @@ TagManager:
   - PlayerHand
   - Fries
   - BurgerBase
+  - GrilledSteak
+  - TomatoSlice
+  - Cheese
+  - BottomBun
+  - TopBun
   layers:
   - Default
   - TransparentFX

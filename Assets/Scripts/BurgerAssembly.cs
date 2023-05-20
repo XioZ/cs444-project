@@ -1,30 +1,33 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /**
  * Snaps ingredients in order into a designated zone in burger box
  */
 // TODO refactor & annotate with comments 
-// TODO: create prefabs with 1) colliders 2) suitable rotation & scale 3) drag into ingredientPrefabs lists in Editor 
-// TODO: play error sound when released object is not an ingredient 
-// TODO: use tags than names & extract const strings 
+// TODO: create prefabs w tags [LettuceSlice] with 1) box colliders 2) suitable rotation & scale 3) drag into ingredientPrefabs lists in Editor 
 public class BurgerAssembly : MonoBehaviour
 {
-    private readonly List<GameObject> _progress = new();
-
-    private bool _isInSnapZone;
-    private GameObject _itemInZone;
-    private Grabbable _itemGrabbable;
-    private bool _isIngredient;
-
-    private AudioSource _audioSource;
-
-    // "BottomBun", "GrilledSteak", "TomatoSlice", "LettuceSlice", "Cheese", "TopBun" prefabs with BoxColliders for stacking ingredients
+    // "BottomBun", "GrilledSteak", "TomatoSlice", "LettuceSlice", "Cheese", "TopBun"
+    // prefabs with BoxColliders for stacking ingredients
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
     public GameObject burgerBase;
+    public AudioClip errorSound;
+
+    private AudioSource _audioSource;
+
+    private bool _isInSnapZone;
+    private GameObject _itemInZone;
+    private Grabbable _itemGrabbable;
+    private bool _hasGrabbable;
+    private GameObject _ingredientPrefab;
+    private bool _isIngredient;
+
+    private readonly List<GameObject> _progress = new();
 
     public string[] StackedIngredients()
     {
@@ -33,8 +36,7 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Start()
     {
-        // todo use AddComponent(): remove AudioSource in Editor; add _audioClip as script attribute; call PlayOneShot()
-        _audioSource = GetComponent<AudioSource>();
+        _audioSource = this.AddComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -44,10 +46,12 @@ public class BurgerAssembly : MonoBehaviour
         // to make a burger and fulfill the order
 
         _isInSnapZone = true;
-        _isIngredient = ingredientPrefabs.Exists(prefab
-            => other.gameObject.name == prefab.name);
+        _ingredientPrefab = ingredientPrefabs.Find(prefab
+            => prefab.CompareTag(other.tag));
+        _isIngredient = _ingredientPrefab != null;
         _itemInZone = other.gameObject;
         _itemGrabbable = _itemInZone.GetComponent<Grabbable>();
+        _hasGrabbable = _itemGrabbable != null;
     }
 
     private void OnTriggerExit(Collider other)
@@ -58,7 +62,6 @@ public class BurgerAssembly : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     private void Update()
     {
         Stack();
@@ -66,23 +69,27 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Stack()
     {
-        if (!_isInSnapZone || !_itemGrabbable.is_available()) return;
+        if (!_isInSnapZone || !_hasGrabbable ||
+            !_itemGrabbable.is_available()) return;
 
         if (!_isIngredient)
         {
-            _audioSource.Play();
+            _audioSource.PlayOneShot(errorSound);
         }
         else
         {
             // Instantiate the ingredient prefab &
             // Position relative to the last stacked ingredient 
-            GameObject prefab = ingredientPrefabs.Find(prefab
-                => prefab.name == _itemInZone.name);
-            GameObject lastIngredient = _progress.Any() ? _progress[^1] : burgerBase;
-            BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
-            Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);
+            GameObject prevIngredient =
+                _progress.Any() ? _progress[^1] : burgerBase;
+            BoxCollider boxCollider =
+                prevIngredient.GetComponent<BoxCollider>();
+            Vector3 position = boxCollider.bounds.center +
+                               new Vector3(0, boxCollider.bounds.size.y / 2, 0);
             Destroy(_itemInZone);
-            GameObject stackedIngredient = Instantiate(prefab, position, prefab.transform.rotation);
+            GameObject stackedIngredient = Instantiate(_ingredientPrefab,
+                position,
+                _ingredientPrefab.transform.rotation);
             // Make ingredients move together as a burger
             stackedIngredient.transform.SetParent(burgerBase.transform);
 
