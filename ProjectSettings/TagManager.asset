@@ -10,6 +10,8 @@ TagManager:
   - PlayerHand
   - MainButton
   - TutorialButton
+  - Fries
+  - BurgerBase
   layers:
   - Default
   - TransparentFX
