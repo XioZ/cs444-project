@@ -33,6 +33,7 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Start()
     {
+        // todo use AddComponent(): remove AudioSource in Editor; add _audioClip as script attribute; call PlayOneShot()
         _audioSource = GetComponent<AudioSource>();
     }
 
