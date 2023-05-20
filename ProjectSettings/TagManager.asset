@@ -12,6 +12,7 @@ TagManager:
   - TutorialButton
   - Fries
   - BurgerBase
+  - FridgeDoor
   layers:
   - Default
   - TransparentFX

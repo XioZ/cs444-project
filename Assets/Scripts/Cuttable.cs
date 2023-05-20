@@ -10,6 +10,8 @@ public class Cuttable : MonoBehaviour
     [Header("Trash Prefab")] public GameObject trashPrefab; // Prefab Only,slices, dices etc.
     private int cutCount = 0;
     public AudioClip cutAudioClip; 
+    public AudioClip cutTooLightAudioClip;
+    public AudioClip cutTooHardAudioClip;
     public AudioClip destroyAudioCilp;
     public int cutLimit = 4;  // cutting how many times will destroy the object 
     private AudioSource audioSource; // the object that can play the sound
@@ -27,28 +29,40 @@ public class Cuttable : MonoBehaviour
 
     private int destroyDelayTime = 3; 
 
-    void OnTriggerEnter(Collider other ){
-        if (other.gameObject.tag == "knife"){
-            Collider myCollider = GetComponent<Collider>();
-            if (myCollider != null)
-            {
-                Physics.IgnoreCollision(myCollider, other);
-            }
+    void OnCollisionEnter(Collision collision ){
+        if (collision.gameObject.tag == "knife"){
+
+            if (collision.impulse.magnitude > 3) {
                 cutCount += 1; 
-            audioSource.PlayOneShot(cutAudioClip);
-            Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
-            Instantiate(cutInto, transform.position, transform.rotation);
-            // cutting many times, destroy after 4 cuts
-            if (cutCount == cutLimit){
-                audioSource.PlayOneShot(destroyAudioCilp);
-                // instantiate a trash object 
+                audioSource.PlayOneShot(cutAudioClip);
+                Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
+                Instantiate(cutInto, transform.position, transform.rotation);
+                audioSource.PlayOneShot(cutAudioClip);
+                // cutting many times, destroy after 4 cuts
+                if (cutCount == cutLimit){
+                    audioSource.PlayOneShot(destroyAudioCilp);
+                    // instantiate a trash object 
+                    Instantiate(trashPrefab, transform.position, transform.rotation);
+                    Wait(destroyDelayTime); 
+                    // destroy the object
+                    gameObject.SetActive(false); 
+                }
+            } else if (collision.impulse.magnitude > 50){
+                audioSource.PlayOneShot(cutTooHardAudioClip);
                 Instantiate(trashPrefab, transform.position, transform.rotation);
-            
-                Wait(destroyDelayTime); 
-                Debug.Log("Destroying Object");
-                gameObject.SetActive(false);
-                
+                Instantiate(trashPrefab, transform.position, transform.rotation);
+                Instantiate(trashPrefab, transform.position, transform.rotation);
+                gameObject.SetActive(false); 
+            } else {
+                audioSource.PlayOneShot(cutTooLightAudioClip);
             }
+            
+
+            Debug.Log(" ==== Cutting Speed {0} {1}"  + collision.gameObject.tag + collision.relativeVelocity);
+            Debug.Log(" #### Impulse {0} {1}"  + collision.impulse);
+
+            
+            
         }
     }
 
