@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /**
@@ -25,9 +26,13 @@ public class BurgerAssembly : MonoBehaviour
     // Base position for stacking ingredients
     public GameObject burgerBase;
 
+    public string[] StackedIngredients()
+    {
+        return _progress.Select(i => i.tag).ToArray();
+    }
+
     private void Start()
     {
-        _progress.Add(burgerBase);
         _audioSource = GetComponent<AudioSource>();
     }
 
@@ -72,7 +77,7 @@ public class BurgerAssembly : MonoBehaviour
             // Position relative to the last stacked ingredient 
             GameObject prefab = ingredientPrefabs.Find(prefab
                 => prefab.name == _itemInZone.name);
-            GameObject lastIngredient = _progress[^1];
+            GameObject lastIngredient = _progress.Any() ? _progress[^1] : burgerBase;
             BoxCollider boxCollider = lastIngredient.GetComponent<BoxCollider>();
             Vector3 position = boxCollider.bounds.center + new Vector3(0, boxCollider.bounds.size.y / 2, 0);
             Destroy(_itemInZone);

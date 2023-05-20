@@ -8,6 +8,8 @@ TagManager:
   - knife
   - pan
   - PlayerHand
+  - Fries
+  - BurgerBase
   layers:
   - Default
   - TransparentFX
