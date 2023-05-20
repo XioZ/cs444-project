@@ -4,14 +4,18 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 /**
- * Snaps ingredients in order into a designated zone in burger box
+ * Stacks ingredients player places in the burger box into a burger
+ *
+ * Any object that is an ingredient can be stacked and
+ * player is expected to place the right ingredients in the right order
+ * to fulfill the received order
  */
 // TODO refactor & annotate with comments 
 // TODO: create prefabs w tags [LettuceSlice] with 1) box colliders 2) suitable rotation & scale 3) drag into ingredientPrefabs lists in Editor 
 public class BurgerAssembly : MonoBehaviour
 {
+    // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into ingredientPrefabs list
     // "BottomBun", "GrilledSteak", "TomatoSlice", "LettuceSlice", "Cheese", "TopBun"
-    // prefabs with BoxColliders for stacking ingredients
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
@@ -41,10 +45,6 @@ public class BurgerAssembly : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Player can stack any item that is an ingredient
-        // and is expected to place the right ones in order
-        // to make a burger and fulfill the order
-
         _isInSnapZone = true;
         _ingredientPrefab = ingredientPrefabs.Find(prefab
             => prefab.CompareTag(other.tag));
@@ -78,18 +78,16 @@ public class BurgerAssembly : MonoBehaviour
         }
         else
         {
-            // Instantiate the ingredient prefab &
-            // Position relative to the last stacked ingredient 
-            GameObject prevIngredient =
+            // Position this ingredient relative to the last one 
+            var prevIngredient =
                 _progress.Any() ? _progress[^1] : burgerBase;
-            BoxCollider boxCollider =
-                prevIngredient.GetComponent<BoxCollider>();
-            Vector3 position = boxCollider.bounds.center +
-                               new Vector3(0, boxCollider.bounds.size.y / 2, 0);
+            var dimension =
+                prevIngredient.GetComponent<BoxCollider>().bounds;
+            var position = dimension.center +
+                           new Vector3(0, dimension.size.y / 2, 0);
             Destroy(_itemInZone);
-            GameObject stackedIngredient = Instantiate(_ingredientPrefab,
-                position,
-                _ingredientPrefab.transform.rotation);
+            var stackedIngredient = Instantiate(_ingredientPrefab,
+                position, _ingredientPrefab.transform.rotation);
             // Make ingredients move together as a burger
             stackedIngredient.transform.SetParent(burgerBase.transform);
 
