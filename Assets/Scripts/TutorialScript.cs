@@ -89,7 +89,7 @@ public class TutorialScript : MonoBehaviour
         switch (statusStep) {
             case 0: 
                 // show the recipe, blink, sound 
-                Welcome();
+                Step0Welcome();
                 break; 
             case 1: 
                 // show the fridge, check if fridge is open 
@@ -109,11 +109,10 @@ public class TutorialScript : MonoBehaviour
                 break;
             case 5: 
                 Step5Assemble();
+                break;
             case 6: 
                 Step6Trash();
-            
-            default: 
-                break; 
+                break;
         }
         
     }
