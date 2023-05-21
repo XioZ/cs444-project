@@ -10,13 +10,22 @@ public class Cuttable : MonoBehaviour
     [Header("Trash Prefab")] public GameObject trashPrefab; // Prefab Only,slices, dices etc.
     private int cutCount = 0;
     public AudioClip cutAudioClip; 
+    public AudioClip cutTooLightAudioClip;
+    public AudioClip cutTooHardAudioClip;
     public AudioClip destroyAudioCilp;
     public int cutLimit = 4;  // cutting how many times will destroy the object 
     private AudioSource audioSource; // the object that can play the sound
-
+    private GameObject hapticModule; 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        if (audioSource == null){
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        hapticModule = GameObject.Find("HapticModule");
+        if (hapticModule == null){
+            Debug.Log("haptic module not found");
+        }
     }
 
     // Update is called once per frame
@@ -27,28 +36,45 @@ public class Cuttable : MonoBehaviour
 
     private int destroyDelayTime = 3; 
 
-    void OnTriggerEnter(Collider other ){
-        if (other.gameObject.tag == "knife"){
-            Collider myCollider = GetComponent<Collider>();
-            if (myCollider != null)
-            {
-                Physics.IgnoreCollision(myCollider, other);
-            }
+    void OnCollisionEnter(Collision collision ){
+        if (collision.gameObject.tag == "knife"){
+            Debug.Log("collision enter {0} {1}" + gameObject.name + gameObject.tag);
+            if (collision.impulse.magnitude > 0.5) {
+                Debug.Log("______________force correct, right before haptic feedback");
+                hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
+                hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
                 cutCount += 1; 
-            audioSource.PlayOneShot(cutAudioClip);
-            Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
-            Instantiate(cutInto, transform.position, transform.rotation);
-            // cutting many times, destroy after 4 cuts
-            if (cutCount == cutLimit){
-                audioSource.PlayOneShot(destroyAudioCilp);
-                // instantiate a trash object 
+                audioSource.PlayOneShot(cutAudioClip);
+                Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
+                Instantiate(cutInto, transform.position, transform.rotation);
+                audioSource.PlayOneShot(cutAudioClip);
+                // cutting many times, destroy after 4 cuts
+                if (cutCount == cutLimit){
+                    audioSource.PlayOneShot(destroyAudioCilp);
+                    // instantiate a trash object 
+                    Instantiate(trashPrefab, transform.position, transform.rotation);
+                    Wait(destroyDelayTime); 
+                    // destroy the object
+                    gameObject.SetActive(false); 
+                }
+            } else if (collision.impulse.magnitude > 20){
+                Debug.Log("______________FORCE TOO HARD ");
+                audioSource.PlayOneShot(cutTooHardAudioClip);
+                hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
+                hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
+
                 Instantiate(trashPrefab, transform.position, transform.rotation);
-            
-                Wait(destroyDelayTime); 
-                Debug.Log("Destroying Object");
-                gameObject.SetActive(false);
-                
+                gameObject.SetActive(false); 
+            } else {
+                audioSource.PlayOneShot(cutTooLightAudioClip);
             }
+            
+
+            Debug.Log(" ==== Cutting Speed {0} {1}"  + collision.gameObject.tag + collision.relativeVelocity);
+            Debug.Log(" #### Impulse {0} {1}"  + collision.impulse);
+
+            
+            
         }
     }
 

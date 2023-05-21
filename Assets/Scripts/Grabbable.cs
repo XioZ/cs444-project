@@ -110,6 +110,11 @@ public class Grabbable : MonoBehaviour
             isRegenerating = false;
             //StartCoroutine(Regenerate());
         }
+        MagneticGrab magneticGrab = transform.GetComponent<MagneticGrab>();
+        if (magneticGrab != null) { 
+            //magneticGrab.enabled = false;
+            //magneticGrab.GetComponent<LineRenderer>().enabled = false;
+        }
         // Make sure that the right hand controller ask for the release
         if (_handController != handController) return;
 
