@@ -16,15 +16,13 @@ public class GameManager : MonoBehaviour
     public TextMeshPro scoreText;
 
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
-    private int _score;
+    private int _numOrdersCompleted;
 
     private Random _random;
 
     private readonly string[] _ingredients =
     {
-        ITags.LettuceSlice, ITags.TomatoSlice, ITags.GrilledSteak,
-        ITags
-            .Cheese
+        ITags.GrilledSteak, ITags.LettuceSlice, ITags.TomatoSlice, ITags.Cheese
     };
 
     private void Start()
@@ -96,28 +94,26 @@ public class GameManager : MonoBehaviour
 
     public void VerifyOrder(FoodDetector foodDetector)
     {
-        int completedOrder = FindCompletedOrder(foodDetector);
+        var completedOrder = FindCompletedOrder(foodDetector);
         if (completedOrder != -1)
         {
             // Order completed
-            // TODO: calculate & increment score by used time 
-            _score += 100;
+            _numOrdersCompleted++;
             // TODO: generate & replace old order with new order 
-            // TODO: show confetti, success sound & score increment
+            // TODO: play success sound
             Debug.LogWarningFormat("order {0} completed", completedOrder);
         }
         else
         {
             // Wrong order
-            // TODO: decrement score by fixed amount
-            _score -= 100;
-
-            // TODO: show explosion, error sound, score decrement & haptic feedback (optional) 
+            // TODO: play error sound & haptic feedback (optional) 
             Debug.LogWarningFormat("wrong order");
         }
 
-        // update UI
-        scoreText.text = _score + "";
+        // Update UI
+        scoreText.text = _numOrdersCompleted + " orders completed";
+        // Reset tray for new order preparation
+        foodDetector.Clear();
     }
 
     private int FindCompletedOrder(FoodDetector foodDetector)

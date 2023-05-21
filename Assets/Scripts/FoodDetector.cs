@@ -10,35 +10,45 @@ using UnityEngine;
 public class FoodDetector : MonoBehaviour
 {
     public BurgerAssembly burgerAssembly;
-    private int _numFries;
-    private int _numDrinks;
 
+    private List<GameObject> _fries = new();
+    private List<GameObject> _drinks = new();
+
+    public void Clear()
+    {
+        _fries.ForEach(Destroy);
+        _fries = new List<GameObject>();
+
+        _drinks.ForEach(Destroy);
+        _drinks = new List<GameObject>();
+
+        burgerAssembly.ClearIngredients();
+    }
 
     public int NumOfFries()
     {
-        return _numFries;
+        return _fries.Count;
     }
 
     public int NumOfDrinks()
     {
-        return _numDrinks;
+        return _drinks.Count;
     }
 
     public string[] BurgerIngredients()
     {
-        return burgerAssembly.StackedIngredients();
+        return burgerAssembly.BurgerIngredients();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(ITags.Fries))
         {
-            _numFries++;
+            _fries.Add(other.gameObject);
         }
-
-        if (other.CompareTag(ITags.Drink))
+        else if (other.CompareTag(ITags.Drink))
         {
-            _numDrinks++;
+            _drinks.Add(other.gameObject);
         }
     }
 
@@ -46,12 +56,11 @@ public class FoodDetector : MonoBehaviour
     {
         if (other.CompareTag(ITags.Fries))
         {
-            _numFries--;
+            _fries.Remove(other.gameObject);
         }
-
-        if (other.CompareTag(ITags.Drink))
+        else if (other.CompareTag(ITags.Drink))
         {
-            _numDrinks--;
+            _drinks.Remove(other.gameObject);
         }
     }
 }

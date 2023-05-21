@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -31,11 +32,17 @@ public class BurgerAssembly : MonoBehaviour
     private GameObject _ingredientPrefab;
     private bool _isIngredient;
 
-    private readonly List<GameObject> _progress = new();
+    private List<GameObject> _progress = new();
 
-    public string[] StackedIngredients()
+    public string[] BurgerIngredients()
     {
         return _progress.Select(i => i.tag).ToArray();
+    }
+
+    public void ClearIngredients()
+    {
+        _progress.ForEach(Destroy);
+        _progress = new List<GameObject>();
     }
 
     private void Start()
