@@ -15,10 +15,17 @@ public class Cuttable : MonoBehaviour
     public AudioClip destroyAudioCilp;
     public int cutLimit = 4;  // cutting how many times will destroy the object 
     private AudioSource audioSource; // the object that can play the sound
-
+    private GameObject hapticModule; 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        if (audioSource == null){
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        hapticModule = GameObject.Find("HapticModule");
+        if (hapticModule == null){
+            Debug.Log("haptic module not found");
+        }
     }
 
     // Update is called once per frame
@@ -31,8 +38,11 @@ public class Cuttable : MonoBehaviour
 
     void OnCollisionEnter(Collision collision ){
         if (collision.gameObject.tag == "knife"){
-
-            if (collision.impulse.magnitude > 1) {
+            Debug.Log("collision enter {0} {1}" + gameObject.name + gameObject.tag);
+            if (collision.impulse.magnitude > 0.5) {
+                Debug.Log("______________force correct, right before haptic feedback");
+                hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
+                hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
                 cutCount += 1; 
                 audioSource.PlayOneShot(cutAudioClip);
                 Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
@@ -48,9 +58,11 @@ public class Cuttable : MonoBehaviour
                     gameObject.SetActive(false); 
                 }
             } else if (collision.impulse.magnitude > 20){
+                Debug.Log("______________FORCE TOO HARD ");
                 audioSource.PlayOneShot(cutTooHardAudioClip);
-                Instantiate(trashPrefab, transform.position, transform.rotation);
-                Instantiate(trashPrefab, transform.position, transform.rotation);
+                hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
+                hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
+
                 Instantiate(trashPrefab, transform.position, transform.rotation);
                 gameObject.SetActive(false); 
             } else {

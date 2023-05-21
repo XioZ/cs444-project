@@ -4,17 +4,18 @@ using UnityEngine;
 
 /**
 TODO: 
-1. fix arrow direction
-2. detect steak 
-3. 
+1. adjust the force of cuttables and sounds 
+2. add hatpic feedback to cuttable 
+3. add haptic feedback to 
+3. test haptic feedback
+
 **/
 public class TutorialScript : MonoBehaviour
 {
     /*** tutorial sequence: 
     step 0: default, upon entering 
-        play welcome audio + recipe audio
-         
-        play open the fridge audio 
+        welcome to the game, the red arrow is showing you the direction 
+        you can grab by pressing all four fingers 
         increment 
     step 1: after opening the fridge 
         check if fridge is open
@@ -30,6 +31,7 @@ public class TutorialScript : MonoBehaviour
         play the assemble audio 
         increment 
     step 4: magnetic grab 
+
     step 5: assemble burger 
         detect if burger is assembled 
         play the serve audio 
@@ -81,30 +83,35 @@ public class TutorialScript : MonoBehaviour
         transform.LookAt(_pointToObject.transform.position);
         transform.Rotate(0.0f, rotateAngle, 0.0f, Space.Self);
         
-        Debug.Log("\n\n\nbar position is {0} {1}" + transform.position + transform.rotation);
-        Debug.Log("current object to look at is {0}" + _pointToObject.name);
+        // Debug.Log("\n\n\nbar position is {0} {1}" + transform.position + transform.rotation);
+        // Debug.Log("current object to look at is {0}" + _pointToObject.name);
 
         switch (statusStep) {
             case 0: 
                 // show the recipe, blink, sound 
-                Step0();
+                Welcome();
                 break; 
             case 1: 
                 // show the fridge, check if fridge is open 
-                Step1();
+                Step1Fridge();
                 break; 
             case 2: 
                 // show the tomato, check if tomato is on the board 
-                Step2();
+                Step2Cut();
                 break;
             case 3: 
                 // show the grill, check if patty is on the grill 
-                Step3();
+                Step3Steak();
                 break;
             case 4:
                 // show the magnetic grab, check if patty is on the grill 
-                Step4();
+                Step4Magnetic();
                 break;
+            case 5: 
+                Step5Assemble();
+            case 6: 
+                Step6Trash();
+            
             default: 
                 break; 
         }
@@ -112,7 +119,7 @@ public class TutorialScript : MonoBehaviour
     }
 
     // NOTE: the previous step is responsible for playing the instruction of the next step!
-    public void Step0 () { 
+    public void Step0Welcome () { 
         audioSource.PlayOneShot(welcomeSound);
         statusStep += 1; // supposed to play open fridge sound 
     }
@@ -120,9 +127,8 @@ public class TutorialScript : MonoBehaviour
     private GameObject door; 
 
 
-    public void Step1 () { 
+    public void Step1Fridge () { 
         door = GameObject.Find("FreeRefrigerator_DoorBig");
-        Debug.Log("door is " + door);
         if (door != null && door.transform.localRotation.y != 0.0f) {
         _pointToObject = door;
             audioSource.PlayOneShot(openFridgeSound); // supposed to be tomato
@@ -131,7 +137,7 @@ public class TutorialScript : MonoBehaviour
     }
     private GameObject[] tomatoObjects; 
 
-    public void Step2 (){
+    public void Step2Cut (){
         tomatoObjects = GameObject.FindGameObjectsWithTag("tomatoSlice");
         if (tomatoObjects.Length > 0){
         _pointToObject = assemblyTray;
@@ -141,22 +147,32 @@ public class TutorialScript : MonoBehaviour
     }
 
     private GameObject[] steakObjects;
-    public void Step3 () {
+    public void Step3Steak () {
         steakObjects = GameObject.FindGameObjectsWithTag("GrilledSteak");
         if (steakObjects.Length > 0){
-         _pointToObject = steakObject[0];
+         _pointToObject = steakObjects[0];
             audioSource.PlayOneShot(correctSound); // supposed to be tomato
             statusStep += 1; 
         }
     } 
 
-    public void Step4 () {
+    public void Step4Magnetic () {
+
 
     }
 
-    public void Step5 () {
+    public void Step5Assemble () {
 
     }
+
+    public void Step6Trash () {
+        
+    }
+
+    public void Step7Locomotion(){
+
+    }
+
 
     IEnumerator Wait(int seconds)
     {
