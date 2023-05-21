@@ -32,12 +32,10 @@ public class ButtonController : MonoBehaviour
         if (!_isPressing && finalDegreePressed > threshold)
         {
             _isPressing = true;
-            Debug.LogWarningFormat("{0} pressing", name);
         }
         else if (_isPressing && finalDegreePressed < threshold)
         {
             _isPressing = false;
-            Debug.LogWarningFormat("{0} pressed", name);
             onPress.Invoke();
         }
     }

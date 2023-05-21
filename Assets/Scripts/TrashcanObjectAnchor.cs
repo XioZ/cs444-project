@@ -22,7 +22,7 @@ public class TrashObjectAnchor : MonoBehaviour
 
     void OnTriggerEnter ( Collider other ) {
 
-        Debug.LogWarningFormat("OnTriggerEnter() {0} ", this.name );
+        Debug.LogFormat("OnTriggerEnter() {0} ", this.name );
         // Retreive the object to be collected if it exits
         // InteractiveItem interative_item = other.GetComponent<InteractiveItem>();
         

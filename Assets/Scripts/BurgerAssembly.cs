@@ -12,7 +12,7 @@ using UnityEngine;
  * to fulfill the received order
  */
 // TODO refactor & annotate with comments 
-// TODO: create prefabs w tags [LettuceSlice] with 1) box colliders 2) suitable rotation & scale 3) drag into ingredientPrefabs lists in Editor 
+// TODO debug tomato slice doesn't stack
 public class BurgerAssembly : MonoBehaviour
 {
     // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into ingredientPrefabs list

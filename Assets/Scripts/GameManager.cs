@@ -12,6 +12,7 @@ using Random = System.Random;
  * Controls overall game flow
  *
  * TODO refactor & annotate
+ * TODO debug verifying full order fails
  */
 public class GameManager : MonoBehaviour
 {
