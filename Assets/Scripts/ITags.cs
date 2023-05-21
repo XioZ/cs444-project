@@ -2,9 +2,9 @@ public interface ITags
 {
     const string TopBun = "TopBun";
     const string BottomBun = "BottomBun";
-    const string Lettuce = "LettuceSlice";
-    const string Tomato = "TomatoSlice";
-    const string Patty = "GrilledSteak";
+    const string LettuceSlice = "LettuceSlice";
+    const string TomatoSlice = "TomatoSlice";
+    const string GrilledSteak = "GrilledSteak";
     const string Cheese = "Cheese";
     
     const string Fries = "Fries";

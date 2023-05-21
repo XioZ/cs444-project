@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using Random = System.Random;
 
@@ -9,19 +10,19 @@ using Random = System.Random;
  * Controls overall game flow
  *
  * TODO refactor & annotate
- * TODO add bounding box on window sill in scene & collision trigger script to track trays/food containers
- * TODO add bell in scene on window sill
- * TODO add script to bell to verify orders when pressed
  */
 public class GameManager : MonoBehaviour
 {
+    public TextMeshPro scoreText;
+
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
+    private int _score;
 
     private Random _random;
 
     private readonly string[] _ingredients =
     {
-        ITags.Lettuce, ITags.Tomato, ITags.Patty,
+        ITags.LettuceSlice, ITags.TomatoSlice, ITags.GrilledSteak,
         ITags
             .Cheese
     };
@@ -34,24 +35,49 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        // GenerateOrders();
+        GenerateTestOrders();
+    }
+
+    private void GenerateTestOrders()
+    {
+        _receivedOrders[0] = GenerateOrderEmpty();
+        _receivedOrders[1] = GenerateOrderFull();
+    }
+
+    private void GenerateOrders()
+    {
         for (int i = 0; i < _receivedOrders.Length; i++)
         {
-            // _receivedOrders[i] = GenerateOrder();
-            _receivedOrders[i] = GenerateTestOrder();
+            _receivedOrders[i] = GenerateRandomOrder();
         }
     }
 
-    private Order GenerateTestOrder()
+    private Order GenerateOrderEmpty()
     {
         return new Order(new[]
             {
                 ITags.BottomBun,
                 ITags.TopBun
             },
-            true, true);
+            false, false);
     }
 
-    private Order GenerateOrder()
+    private Order GenerateOrderFull()
+    {
+        return new Order(new[]
+            {
+                ITags.BottomBun,
+                ITags.GrilledSteak,
+                ITags.LettuceSlice,
+                ITags.TomatoSlice,
+                ITags.Cheese,
+                ITags.TopBun
+            },
+            false, true);
+    }
+
+    private Order GenerateRandomOrder()
     {
         var hasDrink = _random.Next(2) == 0;
         var hasFries = _random.Next(2) == 0;
@@ -70,25 +96,45 @@ public class GameManager : MonoBehaviour
 
     public void VerifyOrder(FoodDetector foodDetector)
     {
+        int completedOrder = FindCompletedOrder(foodDetector);
+        if (completedOrder != -1)
+        {
+            // Order completed
+            // TODO: calculate & increment score by used time 
+            _score += 100;
+            // TODO: generate & replace old order with new order 
+            // TODO: show confetti, success sound & score increment
+            Debug.LogWarningFormat("order {0} completed", completedOrder);
+        }
+        else
+        {
+            // Wrong order
+            // TODO: decrement score by fixed amount
+            _score -= 100;
+
+            // TODO: show explosion, error sound, score decrement & haptic feedback (optional) 
+            Debug.LogWarningFormat("wrong order");
+        }
+
+        // update UI
+        scoreText.text = _score + "";
+    }
+
+    private int FindCompletedOrder(FoodDetector foodDetector)
+    {
         // Check a served order against all received orders
         // if no match is found, show negative feedback 
         for (var i = 0; i < _receivedOrders.Length; i++)
         {
-            if (!IsCorrectOrder(foodDetector.BurgerIngredients(),
+            if (IsCorrectOrder(foodDetector.BurgerIngredients(),
                     foodDetector.NumOfFries(), foodDetector.NumOfDrinks(),
-                    _receivedOrders[i])) continue;
-            // Order completed
-            // TODO: calculate & increment score by used time 
-            // TODO: generate & replace old order with new order 
-            // TODO: show confetti, success sound & score increment
-            Debug.LogWarningFormat("order {0} completed", i);
-            return;
+                    _receivedOrders[i]))
+            {
+                return i;
+            }
         }
 
-        // Wrong order
-        // TODO: decrement score by fixed amount
-        // TODO: show explosion, error sound, score decrement & haptic feedback (optional) 
-        Debug.LogWarningFormat("wrong order");
+        return -1;
     }
 
     private static bool IsCorrectOrder(

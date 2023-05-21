@@ -10,8 +10,8 @@ using UnityEngine;
 public class FoodDetector : MonoBehaviour
 {
     public BurgerAssembly burgerAssembly;
-    private int _numFries = 0;
-    private int _numDrinks = 0;
+    private int _numFries;
+    private int _numDrinks;
 
 
     public int NumOfFries()

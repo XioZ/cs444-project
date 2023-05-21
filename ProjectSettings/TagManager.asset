@@ -20,6 +20,7 @@ TagManager:
   - Knife
   - Trash
   - LettuceSlice
+  - Drink
   layers:
   - Default
   - TransparentFX
