@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     private readonly string[] _ingredients =
     {
-        ITags.GrilledSteak, ITags.LettuceSlice, ITags.TomatoSlice, ITags.Cheese
+        ITags.LettuceSlice, ITags.TomatoSlice, ITags.Cheese, ITags.GrilledSteak
     };
 
     public void VerifyOrder(FoodDetector foodDetector)
@@ -146,9 +146,9 @@ public class GameManager : MonoBehaviour
             {
                 ITags.BottomBun,
                 ITags.GrilledSteak,
-                ITags.LettuceSlice,
-                ITags.TomatoSlice,
                 ITags.Cheese,
+                // ITags.TomatoSlice,
+                ITags.LettuceSlice,
                 ITags.TopBun
             },
             false, true);
