@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 /**
@@ -13,11 +15,18 @@ using Random = System.Random;
  */
 public class GameManager : MonoBehaviour
 {
-    public TextMeshPro scoreText;
+    public TextMeshPro countdownText;
+    public TextMeshPro revenueText;
+    public AudioClip timeUpSound;
+    public int duration = 180;
 
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
-    private int _numOrdersCompleted;
+    private bool _hasStarted;
+    private bool _hasEnded;
+    private float _timeLeft;
+    private int _revenue;
 
+    private AudioSource _audioSource;
     private Random _random;
 
     private readonly string[] _ingredients =
@@ -25,16 +34,86 @@ public class GameManager : MonoBehaviour
         ITags.GrilledSteak, ITags.LettuceSlice, ITags.TomatoSlice, ITags.Cheese
     };
 
+    public void VerifyOrder(FoodDetector foodDetector)
+    {
+        if (!_hasStarted || _hasEnded) return;
+
+        var completedOrder = FindCompletedOrder(foodDetector);
+        if (completedOrder != -1)
+        {
+            // Order completed
+            _revenue += 20;
+            // TODO: generate & replace old order with new order 
+            // TODO: play success sound
+            Debug.LogWarningFormat("order {0} completed", completedOrder);
+        }
+        else
+        {
+            // Wrong order
+            // TODO: play error sound & haptic feedback (optional) 
+            Debug.LogWarningFormat("wrong order");
+        }
+
+        // Update UI
+        revenueText.text = "$" + _revenue;
+        // Reset tray for new order preparation
+        foodDetector.Clear();
+    }
+
     private void Start()
     {
         _random = new Random();
-        StartGame();
+        _audioSource = this.AddComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        if (!_hasStarted && !_hasEnded)
+        {
+            StartGame();
+        }
+        else if (_hasStarted && !_hasEnded && _timeLeft <= 0f)
+        {
+            EndGame();
+        }
+        else if (_hasStarted && !_hasEnded && _timeLeft > 0f)
+        {
+            UpdateCountdown();
+        }
+    }
+
+    private void UpdateCountdown()
+    {
+        if (Time.timeSinceLevelLoad < 2.5f || _timeLeft <= 0) return;
+
+        _timeLeft -= Time.deltaTime;
+        ShowTimeLeft();
+    }
+
+    private void ShowTimeLeft()
+    {
+        var minutes = Mathf.Max(Mathf.FloorToInt(_timeLeft / 60f), 0);
+        var seconds = Mathf.Max(Mathf.FloorToInt(_timeLeft % 60f), 0);
+        countdownText.text = $"{minutes:00}:{seconds:00}";
     }
 
     private void StartGame()
     {
         // GenerateOrders();
         GenerateTestOrders();
+
+        _timeLeft = duration;
+        _hasStarted = true;
+        ShowTimeLeft();
+    }
+
+    private void EndGame()
+    {
+        _audioSource.PlayOneShot(timeUpSound);
+        _timeLeft = 0f;
+        _hasStarted = false;
+        _hasEnded = true;
+        ShowTimeLeft();
     }
 
     private void GenerateTestOrders()
@@ -90,30 +169,6 @@ public class GameManager : MonoBehaviour
         }
 
         return new Order(burgerIngredients, hasDrink, hasFries);
-    }
-
-    public void VerifyOrder(FoodDetector foodDetector)
-    {
-        var completedOrder = FindCompletedOrder(foodDetector);
-        if (completedOrder != -1)
-        {
-            // Order completed
-            _numOrdersCompleted++;
-            // TODO: generate & replace old order with new order 
-            // TODO: play success sound
-            Debug.LogWarningFormat("order {0} completed", completedOrder);
-        }
-        else
-        {
-            // Wrong order
-            // TODO: play error sound & haptic feedback (optional) 
-            Debug.LogWarningFormat("wrong order");
-        }
-
-        // Update UI
-        scoreText.text = _numOrdersCompleted + " orders completed";
-        // Reset tray for new order preparation
-        foodDetector.Clear();
     }
 
     private int FindCompletedOrder(FoodDetector foodDetector)
