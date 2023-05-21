@@ -3,14 +3,12 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /**
- * Follows tutorial at https://www.youtube.com/watch?v=HFNzVMi5MSQ
- *
- * TODO use event & listener to execute onPress() callback
+ * Follow tutorial at https://www.youtube.com/watch?v=HFNzVMi5MSQ
+ * 
  */
 public class ButtonController : MonoBehaviour
 {
-    public float threshold = 0.1f;
-    public float deadZone = 0.025f;
+    public float threshold = 0.5f;
 
     private bool _isPressing;
     private Vector3 _startPosition;
@@ -29,19 +27,17 @@ public class ButtonController : MonoBehaviour
         var degreePressed =
             Vector3.Distance(_startPosition, transform.localPosition) /
             _joint.linearLimit.limit;
-        var adjustedDegreePressed =
-            degreePressed < deadZone ? 0f : degreePressed;
-        var finalDegreePressed = Mathf.Clamp(adjustedDegreePressed, 0f, 1f);
+        var finalDegreePressed = Mathf.Clamp(degreePressed, 0f, 1f);
 
         if (!_isPressing && finalDegreePressed > threshold)
         {
             _isPressing = true;
-            Debug.LogWarningFormat("pressing");
+            Debug.LogWarningFormat("{0} pressing", name);
         }
         else if (_isPressing && finalDegreePressed < threshold)
         {
             _isPressing = false;
-            Debug.LogWarningFormat("pressed");
+            Debug.LogWarningFormat("{0} pressed", name);
             onPress.Invoke();
         }
     }

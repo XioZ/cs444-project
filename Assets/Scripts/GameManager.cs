@@ -1,40 +1,54 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
 /**
  * Controls overall game flow
  *
+ * TODO refactor & annotate
  * TODO add bounding box on window sill in scene & collision trigger script to track trays/food containers
  * TODO add bell in scene on window sill
  * TODO add script to bell to verify orders when pressed
- * TODO 
  */
 public class GameManager : MonoBehaviour
 {
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
-    private readonly List<GameObject> _servedOrders = new();
 
     private Random _random;
 
     private readonly string[] _ingredients =
     {
-        Ingredients.Lettuce, Ingredients.Tomato, Ingredients.Patty, Ingredients
+        IIngredients.Lettuce, IIngredients.Tomato, IIngredients.Patty,
+        IIngredients
             .Cheese
     };
 
     private void Start()
     {
         _random = new Random();
+        StartGame();
     }
 
-    public void StartGame()
+    private void StartGame()
     {
-        // generate 2 random orders with sides
-        _receivedOrders[0] = GenerateOrder();
-        _receivedOrders[1] = GenerateOrder();
+        for (int i = 0; i < _receivedOrders.Length; i++)
+        {
+            // _receivedOrders[i] = GenerateOrder();
+            _receivedOrders[i] = GenerateTestOrder();
+        }
+    }
+
+    private Order GenerateTestOrder()
+    {
+        return new Order(new[]
+            {
+                IIngredients.BottomBun,
+                IIngredients.TopBun
+            },
+            true, true);
     }
 
     private Order GenerateOrder()
@@ -43,104 +57,53 @@ public class GameManager : MonoBehaviour
         var hasFries = _random.Next(2) == 0;
         var numIngredients = _random.Next(1, 5);
         var burgerIngredients = new string[numIngredients + 2];
-        burgerIngredients[0] = Ingredients.BottomBun;
-        burgerIngredients[numIngredients + 1] = Ingredients.TopBun;
+        burgerIngredients[0] = IIngredients.BottomBun;
+        burgerIngredients[numIngredients + 1] = IIngredients.TopBun;
         for (var i = 1; i < numIngredients + 1; i++)
         {
-            burgerIngredients[i] = _ingredients[_random.Next(_ingredients.Length)];
+            burgerIngredients[i] =
+                _ingredients[_random.Next(_ingredients.Length)];
         }
 
         return new Order(burgerIngredients, hasDrink, hasFries);
     }
 
-    public void Serve(GameObject container)
+    public void VerifyOrder(FoodDetector foodDetector)
     {
-        _servedOrders.Add(container);
-    }
-
-    public void Return(GameObject container)
-    {
-        _servedOrders.Remove(container);
-    }
-
-    public void VerifyOrders()
-    {
-        // check each served order against each received order
-        // if a match is found, complete the received order & show positive feedback 
+        // Check a served order against all received orders
         // if no match is found, show negative feedback 
-        for (int servedIndex = 0; servedIndex < _servedOrders.Count; servedIndex++)
+        for (var i = 0; i < _receivedOrders.Length; i++)
         {
-            bool isServedOrderCorrect = false;
-            for (int receivedIndex = 0; receivedIndex < _receivedOrders.Length; receivedIndex++)
-            {
-                if (IsCorrectOrder(_servedOrders[servedIndex], _receivedOrders[receivedIndex]))
-                {
-                    // TODO: calculate & increment score by used time 
-                    // TODO: generate & replace old order with new order 
-                    // TODO: show confetti & score increment
-                    isServedOrderCorrect = true;
-                    break;
-                }
-            }
-
-            if (!isServedOrderCorrect)
-            {
-                // TODO: decrement score - fixed ?
-                // TODO: show explosion, audio/haptic feedback & score decrement 
-            }
+            if (!IsCorrectOrder(foodDetector.BurgerIngredients(),
+                    foodDetector.NumOfFries(), foodDetector.NumOfDrinks(),
+                    _receivedOrders[i])) continue;
+            // Order completed
+            // TODO: calculate & increment score by used time 
+            // TODO: generate & replace old order with new order 
+            // TODO: show confetti, success sound & score increment
+            Debug.LogWarningFormat("order {0} completed", i);
+            return;
         }
+
+        // Wrong order
+        // TODO: decrement score by fixed amount
+        // TODO: show explosion, error sound, score decrement & haptic feedback (optional) 
+        Debug.LogWarningFormat("wrong order");
     }
 
-    private bool IsCorrectOrder(GameObject container, Order order)
+    private static bool IsCorrectOrder(
+        IReadOnlyCollection<string> burgerIngredients,
+        int numFries, int numDrinks, Order order)
     {
-        if (order.HasDrink && !HasChildWithTag(container.transform, "Drink"))
+        // Check sides are added according to order
+        if (order.HasFries ? numFries != 1 : numFries != 0)
             return false;
-        if (order.HasFries && !HasChildWithTag(container.transform, "Fries"))
+        if (order.HasDrink ? numDrinks != 1 : numFries != 0)
             return false;
-        // get BurgerAssembly._progress
-        Transform burgerBase = FindChildWithTag(container.transform, "BurgerBase")
-                               ?? throw new NoNullAllowedException("BurgerBase not found");
-        BurgerAssembly burgerAssembly = burgerBase.gameObject.GetComponent<BurgerAssembly>() ??
-                                        throw new NoNullAllowedException("BurgerAssembly not found");
-        string[] stackedIngredients = burgerAssembly.StackedIngredients();
-        if (stackedIngredients.Length != order.BurgerIngredients.Length)
+        // Check burger ingredients are assembled according to order
+        if (burgerIngredients.Count != order.BurgerIngredients.Length)
             return false;
-        // check each item's tag against order ingredient name one by one
-        // till list end (same length)
-        for (int i = 0; i < stackedIngredients.Length; i++)
-        {
-            if (stackedIngredients[i] != order.BurgerIngredients[i])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool HasChildWithTag(Transform parent, string expectedTag)
-    {
-        foreach (Transform child in parent)
-        {
-            if (child.CompareTag(expectedTag))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static Transform FindChildWithTag(Transform parent, string expectedTag)
-    {
-        foreach (Transform child in parent)
-        {
-            if (child.CompareTag(expectedTag))
-            {
-                return child;
-            }
-        }
-
-        return null;
+        return !burgerIngredients.Where((ingredient, i) =>
+            ingredient != order.BurgerIngredients[i]).Any();
     }
 }
