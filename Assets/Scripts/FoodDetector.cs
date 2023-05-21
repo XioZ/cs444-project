@@ -31,12 +31,12 @@ public class FoodDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(ISides.Fries))
+        if (other.CompareTag(ITags.Fries))
         {
             _numFries++;
         }
 
-        if (other.CompareTag(ISides.Drink))
+        if (other.CompareTag(ITags.Drink))
         {
             _numDrinks++;
         }
@@ -44,12 +44,12 @@ public class FoodDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(ISides.Fries))
+        if (other.CompareTag(ITags.Fries))
         {
             _numFries--;
         }
 
-        if (other.CompareTag(ISides.Drink))
+        if (other.CompareTag(ITags.Drink))
         {
             _numDrinks--;
         }

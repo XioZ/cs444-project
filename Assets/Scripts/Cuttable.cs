@@ -37,7 +37,7 @@ public class Cuttable : MonoBehaviour
     private int destroyDelayTime = 3; 
 
     void OnCollisionEnter(Collision collision ){
-        if (collision.gameObject.tag == "knife"){
+        if (collision.gameObject.tag == ITags.Knife){
             Debug.Log("collision enter {0} {1}" + gameObject.name + gameObject.tag);
             if (collision.impulse.magnitude > 0.5) {
                 Debug.Log("______________force correct, right before haptic feedback");

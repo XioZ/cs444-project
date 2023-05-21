@@ -52,7 +52,7 @@ public class SteakSizzle : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("pan"))
+        if (collision.gameObject.CompareTag(ITags.Pan))
         {
             sizzlingAudioSource.Play();
             tickingAudioSource.Play();
@@ -63,7 +63,7 @@ public class SteakSizzle : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.CompareTag("pan"))
+        if (collision.gameObject.CompareTag(ITags.Pan))
         {
             sizzlingAudioSource.Stop();
             tickingAudioSource.Stop();

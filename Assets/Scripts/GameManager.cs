@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
 
     private readonly string[] _ingredients =
     {
-        IIngredients.Lettuce, IIngredients.Tomato, IIngredients.Patty,
-        IIngredients
+        ITags.Lettuce, ITags.Tomato, ITags.Patty,
+        ITags
             .Cheese
     };
 
@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
     {
         return new Order(new[]
             {
-                IIngredients.BottomBun,
-                IIngredients.TopBun
+                ITags.BottomBun,
+                ITags.TopBun
             },
             true, true);
     }
@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
         var hasFries = _random.Next(2) == 0;
         var numIngredients = _random.Next(1, 5);
         var burgerIngredients = new string[numIngredients + 2];
-        burgerIngredients[0] = IIngredients.BottomBun;
-        burgerIngredients[numIngredients + 1] = IIngredients.TopBun;
+        burgerIngredients[0] = ITags.BottomBun;
+        burgerIngredients[numIngredients + 1] = ITags.TopBun;
         for (var i = 1; i < numIngredients + 1; i++)
         {
             burgerIngredients[i] =

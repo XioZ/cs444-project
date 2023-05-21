@@ -4,23 +4,22 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - trashball
-  - knife
-  - pan
   - PlayerHand
   - MainButton
   - TutorialButton
   - Fries
   - BurgerBase
   - FridgeDoor
-  - tomato
-  - tomatoSlice
-  - GrilledSteak
   - GrilledSteak
   - TomatoSlice
   - Cheese
   - BottomBun
   - TopBun
+  - Tomato
+  - Pan
+  - Knife
+  - Trash
+  - LettuceSlice
   layers:
   - Default
   - TransparentFX
