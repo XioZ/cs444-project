@@ -177,7 +177,6 @@ public class HandController : MonoBehaviour {
 			if (magneticGrab != null ) { 
 				magneticGrab.ResetHighlight();
 				lineRenderer.enabled = false;
-			
 				magneticGrab.enabled = false;
                 
             }

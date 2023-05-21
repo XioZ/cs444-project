@@ -13,6 +13,9 @@ TagManager:
   - Fries
   - BurgerBase
   - FridgeDoor
+  - tomato
+  - tomatoSlice
+  - GrilledSteak
   layers:
   - Default
   - TransparentFX

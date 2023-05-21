@@ -32,7 +32,7 @@ public class Cuttable : MonoBehaviour
     void OnCollisionEnter(Collision collision ){
         if (collision.gameObject.tag == "knife"){
 
-            if (collision.impulse.magnitude > 3) {
+            if (collision.impulse.magnitude > 1) {
                 cutCount += 1; 
                 audioSource.PlayOneShot(cutAudioClip);
                 Vector3 point3 = new Vector3(0, 2 * cutCount, 0);
@@ -47,7 +47,7 @@ public class Cuttable : MonoBehaviour
                     // destroy the object
                     gameObject.SetActive(false); 
                 }
-            } else if (collision.impulse.magnitude > 50){
+            } else if (collision.impulse.magnitude > 20){
                 audioSource.PlayOneShot(cutTooHardAudioClip);
                 Instantiate(trashPrefab, transform.position, transform.rotation);
                 Instantiate(trashPrefab, transform.position, transform.rotation);
