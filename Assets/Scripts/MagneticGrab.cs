@@ -12,6 +12,7 @@ public class MagneticGrab : MonoBehaviour
     private Material _defaultMaterial;
     private MeshRenderer _renderer;
     private Rigidbody _rigidbody;
+    
 
     void Start()
     {

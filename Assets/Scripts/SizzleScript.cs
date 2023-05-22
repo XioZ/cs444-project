@@ -80,7 +80,7 @@ public class SteakSizzle : MonoBehaviour
 
         // Replace the raw steak with the cooked steak
         GameObject cookedSteak = Instantiate(cookedSteakPrefab, transform.position, transform.rotation);
-
+        cookedSteak.tag = "GrilledSteak";
         AudioSource cookedSteakAudioSource = cookedSteak.AddComponent<AudioSource>();
         cookedSteakAudioSource.PlayOneShot(doneSound);
         // Play the done sound
