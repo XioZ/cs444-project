@@ -120,7 +120,7 @@ public class HandController : MonoBehaviour {
                     object_grasped = magnetic_anchors_in_the_scene[i].GetComponent<Grabbable>();
                     if (magnetic_anchors_in_the_scene[i].CompareTag("MainButton"))
 					{
-                        SceneManager.LoadScene("MainScene");
+                        SceneManager.LoadScene("MainS cene");
 						break;
                     } else if (magnetic_anchors_in_the_scene[i].CompareTag("TutorialButton"))
 					{
@@ -128,7 +128,7 @@ public class HandController : MonoBehaviour {
 						break;
                     }
                     object_grasped.attach_to(this);
-                    
+				
                     break;
 
                 }

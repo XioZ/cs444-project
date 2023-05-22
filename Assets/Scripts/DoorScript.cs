@@ -37,13 +37,10 @@ public class DoorScript : MonoBehaviour
     public void OpenDoor(float pullDistance)
     {
         
-        Debug.Log("Inside OpenDoor() ");
-        // _rController.GetComponent<HapticFeedback>().TriggerHapticFeedback();
-        // _lController.GetComponent<HapticFeedback>().TriggerHapticFeedback();
-        
         // it's possible to know which hand is opening the door, but the tag needs to be more precise than "playerHand"
         hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
         hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
+        
         // Convert pull distance to a percentage of the max pull distance
         float pullPercentage = Mathf.Clamp(pullDistance / 1.5f, 0f, 1.5f); // Assuming a max pull distance of 1 meter
 
