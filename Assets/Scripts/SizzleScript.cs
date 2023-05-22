@@ -83,11 +83,9 @@ public class SteakSizzle : MonoBehaviour
         cookedSteak.tag = "GrilledSteak";
         AudioSource cookedSteakAudioSource = cookedSteak.AddComponent<AudioSource>();
         cookedSteakAudioSource.PlayOneShot(doneSound);
-        // Play the done sound
-        //doneAudioSource.PlayOneShot(doneSound);
-
+      
         // Hide the progress bar
         progressBar.SetActive(false);
-        Destroy(gameObject);
+        gameObject.SetActive(false); // Hide the raw steak
     }
 }
