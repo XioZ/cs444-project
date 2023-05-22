@@ -5,9 +5,10 @@ public class Order
 {
     public Order([NotNull] string[] burger, bool hasDrink, bool hasFries)
     {
+        BurgerIngredients =
+            burger ?? throw new ArgumentNullException(nameof(burger));
         HasDrink = hasDrink;
         HasFries = hasFries;
-        BurgerIngredients = burger ?? throw new ArgumentNullException(nameof(burger));
     }
 
     public string[] BurgerIngredients { get; }
@@ -15,4 +16,10 @@ public class Order
     public bool HasDrink { get; }
 
     public bool HasFries { get; }
+
+    public override string ToString()
+    {
+        return
+            $"Burger {BurgerIngredients} HasDrink {HasDrink} HasFries {HasFries}";
+    }
 }

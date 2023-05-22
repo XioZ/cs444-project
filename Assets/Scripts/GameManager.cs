@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
                 ITags.BottomBun,
                 ITags.GrilledSteak,
                 ITags.Cheese,
-                // ITags.TomatoSlice,
+                ITags.TomatoSlice,
                 ITags.LettuceSlice,
                 ITags.TopBun
             },
@@ -193,6 +193,9 @@ public class GameManager : MonoBehaviour
         IReadOnlyCollection<string> burgerIngredients,
         int numFries, int numDrinks, Order order)
     {
+        Debug.LogWarningFormat(
+            "served {0} burger {1} fries {2} drinks vs order {3}",
+            burgerIngredients, numFries, numDrinks, order);
         // Check sides are added according to order
         if (order.HasFries ? numFries != 1 : numFries != 0)
             return false;
