@@ -10,16 +10,16 @@ using Random = System.Random;
 
 /**
  * Controls overall game flow
- *
- * TODO refactor & annotate
- * TODO debug verifying full order fails
  */
 public class GameManager : MonoBehaviour
 {
     public TextMeshPro countdownText;
     public TextMeshPro revenueText;
+    public AudioClip correctOrderSound;
+    public AudioClip wrongOrderSound;
     public AudioClip timeUpSound;
     public int duration = 180;
+    public GameObject hapticModule;
 
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
     private bool _hasStarted;
@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     private int _revenue;
 
     private AudioSource _audioSource;
+    private HapticFeedback _hapticFeedback;
     private Random _random;
 
     private readonly string[] _ingredients =
@@ -49,13 +50,16 @@ public class GameManager : MonoBehaviour
             // Order completed
             _revenue += 20;
             // TODO: generate & replace old order with new order 
-            // TODO: play success sound
+            _audioSource.PlayOneShot(correctOrderSound);
             Debug.LogWarningFormat("order {0} completed", completedOrder);
         }
         else
         {
             // Wrong order
             // TODO: play error sound & haptic feedback (optional) 
+            _audioSource.PlayOneShot(wrongOrderSound);
+            _hapticFeedback.LeftLongVibration();
+            _hapticFeedback.RightLongVibration();
             Debug.LogWarningFormat("wrong order");
         }
 
@@ -69,6 +73,7 @@ public class GameManager : MonoBehaviour
     {
         _random = new Random();
         _audioSource = this.AddComponent<AudioSource>();
+        _hapticFeedback = hapticModule.GetComponent<HapticFeedback>();
     }
 
     private void Update()
@@ -89,7 +94,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateCountdown()
     {
-        if (Time.timeSinceLevelLoad < 2.5f || _timeLeft <= 0) return;
+        if (Time.timeSinceLevelLoad < 2f || _timeLeft <= 0) return;
 
         _timeLeft -= Time.deltaTime;
         ShowTimeLeft();
