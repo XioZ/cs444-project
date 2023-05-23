@@ -6,7 +6,7 @@ public class MagneticGrab : MonoBehaviour
 {
     public HandController handController; // You need a reference to the hand controller
     public Material highlightedMaterial;
-    public float highlightDistance = 1f;
+    public float highlightDistance = 1.5f;
     public float magneticForce = 10f;
 
     private Material _defaultMaterial;

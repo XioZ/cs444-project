@@ -57,10 +57,17 @@ public class HandController : MonoBehaviour {
 		else if (handType == HandType.RightHand){
 			throw_velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
 		}
-		Vector3 throw_velocity_world = transform.TransformDirection(throw_velocity);
-		Debug.Log(" get_velocity() {0} " + throw_velocity); 
-		Debug.Log(" get_velocity() world {1} " + transform.TransformDirection(throw_velocity));
-		return throw_velocity_world;
+		return throw_velocity;
+	}
+
+	protected Vector3 get_angular_velocity(){
+		Vector3 angular_velocity = Vector3.zero;
+		if (handType == HandType.LeftHand)
+			angular_velocity = OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.LTouch);
+		else if (handType == HandType.RightHand){
+			angular_velocity = OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.RTouch);
+		}
+		return angular_velocity;
 	}
 
 	// Automatically called at each frame
@@ -175,8 +182,9 @@ public class HandController : MonoBehaviour {
 			// Log the release
 			Debug.LogFormat("{0} released {1}", this.transform.parent.name, object_grasped.name);
             Vector3 linearVelocity = get_velocity();
+			Vector3 angular_velocity = get_angular_velocity();
 
-			object_grasped.detach_from(this, linearVelocity);
+			object_grasped.detach_from(this, linearVelocity, angular_velocity);
 			Debug.Log(" hand releasing velocity " + linearVelocity );
 			// Vector3 acceleration = OVRInput.GetLocalControllerAcceleration(OVRInput.Controller.RTouch);
 			// Debug.Log(" hand releasing acceleration {0}" + acceleration);
