@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /**
  * Stacks ingredients player places in the burger box into a burger
@@ -19,29 +20,29 @@ public class BurgerAssembly : MonoBehaviour
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
-    public GameObject burgerBase;
+    [FormerlySerializedAs("burgerBase")] public BoxCollider baseCollider;
     public AudioClip errorSound;
 
     private AudioSource _audioSource;
 
-    private bool _isInSnapZone;
-    private GameObject _itemInZone;
-    private Grabbable _itemGrabbable;
+    private bool _hasCollider;
+    private Collider _collider;
+    private Grabbable _colliderGrabbable;
     private bool _hasGrabbable;
     private GameObject _ingredientPrefab;
     private bool _isIngredient;
 
-    private List<GameObject> _progress = new();
+    private List<BoxCollider> _stackedColliders = new();
 
     public string[] BurgerIngredients()
     {
-        return _progress.Select(i => i.tag).ToArray();
+        return _stackedColliders.Select(i => i.tag).ToArray();
     }
 
     public void ClearIngredients()
     {
-        _progress.ForEach(Destroy);
-        _progress = new List<GameObject>();
+        _stackedColliders.ForEach(_ => Destroy(_.gameObject));
+        _stackedColliders = new List<BoxCollider>();
     }
 
     private void Start()
@@ -51,20 +52,22 @@ public class BurgerAssembly : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _isInSnapZone = true;
+        if (other.CompareTag(ITags.Tray)) return;
+
+        _hasCollider = true;
         _ingredientPrefab = ingredientPrefabs.Find(prefab
             => prefab.CompareTag(other.tag));
         _isIngredient = _ingredientPrefab != null;
-        _itemInZone = other.gameObject;
-        _itemGrabbable = _itemInZone.GetComponent<Grabbable>();
-        _hasGrabbable = _itemGrabbable != null;
+        _collider = other;
+        _colliderGrabbable = _collider.GetComponent<Grabbable>();
+        _hasGrabbable = _colliderGrabbable != null;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (ReferenceEquals(other.gameObject, _itemInZone))
+        if (ReferenceEquals(other, _collider))
         {
-            _isInSnapZone = false;
+            _hasCollider = false;
         }
     }
 
@@ -75,8 +78,8 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Stack()
     {
-        if (!_isInSnapZone || !_hasGrabbable ||
-            !_itemGrabbable.is_available()) return;
+        if (!_hasCollider || !_hasGrabbable ||
+            !_colliderGrabbable.is_available()) return;
 
         if (!_isIngredient)
         {
@@ -85,22 +88,22 @@ public class BurgerAssembly : MonoBehaviour
         else
         {
             // Position this ingredient relative to the last one 
-            var prevIngredient =
-                _progress.Any() ? _progress[^1] : burgerBase;
-            var dimension =
-                prevIngredient.GetComponent<BoxCollider>().bounds;
-            var position = dimension.center +
-                           new Vector3(0, dimension.size.y / 2 + 0.005f, 0);
-            Destroy(_itemInZone);
+            var prevCollider = _stackedColliders.Any() ? _stackedColliders[^1] : baseCollider;
+            var prevBounds = prevCollider.bounds;
+            var position = prevBounds.center +
+                           new Vector3(0, prevBounds.size.y / 2, 0);
+
+            Destroy(_collider.gameObject);
             var stackedIngredient = Instantiate(_ingredientPrefab,
                 position, _ingredientPrefab.transform.rotation);
-            // Make ingredients move together as a burger
-            stackedIngredient.transform.SetParent(burgerBase.transform);
 
-            _progress.Add(stackedIngredient);
+            // Make ingredients move together as a burger
+            stackedIngredient.transform.SetParent(baseCollider.transform);
+
+            _stackedColliders.Add(stackedIngredient.GetComponent<BoxCollider>());
         }
 
         // Reset for next object
-        _isInSnapZone = false;
+        _hasCollider = false;
     }
 }

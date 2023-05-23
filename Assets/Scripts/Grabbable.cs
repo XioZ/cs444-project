@@ -29,11 +29,6 @@ public class Grabbable : MonoBehaviour
         _hasRigidBody = _rigidbody != null;
     }
 
-    void Update()
-    {
-        Debug.Log("grabbale update speed {0} " + _rigidbody.velocity);
-    }
-
     // todo refactor & clean up: move/initialize expensive calls in Start(); comment/remove logs after done testing 
     public void stop_moving (GameObject trashcan) {
         Vector3 zeroforce = new Vector3 (0,0,0);

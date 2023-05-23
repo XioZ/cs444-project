@@ -36,7 +36,9 @@ public class FoodDetector : MonoBehaviour
 
     public string[] BurgerIngredients()
     {
-        return _burgerAssembly.BurgerIngredients();
+        return _burgerAssembly == null
+            ? new string[] { }
+            : _burgerAssembly.BurgerIngredients();
     }
 
     private void OnTriggerEnter(Collider other)
