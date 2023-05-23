@@ -15,20 +15,20 @@ using UnityEngine.SceneManagement;
  */
 public class GameManager : MonoBehaviour
 {
-    public List<GameObject> displayedOrders;
+    public List<Renderer> orderDisplays;
     public List<Material> orderMaterials;
     public TextMeshPro countdownText;
     public TextMeshPro revenueText;
     public AudioClip correctOrderSound;
     public AudioClip wrongOrderSound;
     public AudioClip timeUpSound;
-    public int duration = 180;
+    public int duration = 300;
     public GameObject hapticModule;
     public AudioClip endSuccessSound;
     public AudioClip endFailureSound;
 
     private Order[] _possibleOrders;
-    private readonly Order[] _activeOrders = new Order[2]; // always 2 orders
+    private int[] _activeOrderIds;
     private bool _hasStarted;
     private bool _hasEnded;
     private float _timeLeft;
@@ -46,14 +46,13 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        var completedOrder = FindCompletedOrder(foodDetector);
-        if (completedOrder != -1)
+        var completedOrderIndex = FindCompletedOrder(foodDetector);
+        if (completedOrderIndex != -1)
         {
             // Order completed
             _revenue += 20;
             _audioSource.PlayOneShot(correctOrderSound);
-            GenerateOrder(completedOrder);
-            Debug.LogWarningFormat("order {0} completed", completedOrder);
+            FlipOrder(completedOrderIndex);
         }
         else
         {
@@ -61,7 +60,6 @@ public class GameManager : MonoBehaviour
             _audioSource.PlayOneShot(wrongOrderSound);
             _hapticFeedback.LeftLongVibration();
             _hapticFeedback.RightLongVibration();
-            Debug.LogWarningFormat("wrong order");
         }
 
         // Update UI
@@ -72,27 +70,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        _possibleOrders = new[]
-        {
-            new Order(new[]
-            {
-                ITags.BottomBun,
-                ITags.GrilledSteak,
-                ITags.Cheese,
-                ITags.TomatoSlice,
-                ITags.LettuceSlice,
-                ITags.TopBun
-            }),
-            new Order(new[]
-            {
-                ITags.BottomBun,
-                ITags.GrilledSteak,
-                ITags.Cheese,
-                ITags.GrilledSteak,
-                ITags.Cheese,
-                ITags.TopBun
-            })
-        };
         _random = new Random();
         _audioSource = this.AddComponent<AudioSource>();
         _hapticFeedback = hapticModule.GetComponent<HapticFeedback>();
@@ -116,7 +93,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateCountdown()
     {
-        if (Time.timeSinceLevelLoad < 2f || _timeLeft <= 0) return;
+        if (Time.timeSinceLevelLoad < 1.5f || _timeLeft <= 0) return;
 
         _timeLeft -= Time.deltaTime;
         ShowTimeLeft();
@@ -131,89 +108,83 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        InitializeOrders();
-        // GenerateTestOrders();
-
         _timeLeft = duration;
         _hasStarted = true;
         ShowTimeLeft();
+        InitializeOrders();
     }
 
+    private void InitializeOrders()
+    {
+        _possibleOrders = new[]
+        {
+            new Order(new[]
+            {
+                ITags.BottomBun,
+                ITags.GrilledSteak,
+                ITags.Cheese,
+                ITags.TomatoSlice,
+                ITags.LettuceSlice,
+                ITags.TopBun
+            }),
+            new Order(new[]
+            {
+                ITags.BottomBun,
+                ITags.GrilledSteak,
+                ITags.Cheese,
+                ITags.GrilledSteak,
+                ITags.Cheese,
+                ITags.TopBun
+            })
+        };
+
+        _activeOrderIds = new int[orderDisplays.Count];
+        for (var i = 0; i < orderDisplays.Count; i++)
+        {
+            var orderId = i % _possibleOrders.Length;
+            _activeOrderIds[i] = orderId;
+            orderDisplays[i].material
+                = orderMaterials[orderId];
+        }
+    }
 
     private void EndGame()
     {
-        if (_revenue >= 40) {
-            _audioSource.PlayOneShot(endSuccessSound);
-        } else {
-            _audioSource.PlayOneShot(endFailureSound);
-        }
+        _audioSource.PlayOneShot(_revenue >= 40f
+            ? endSuccessSound
+            : endFailureSound);
+
         // _audioSource.PlayOneShot(timeUpSound);
         _timeLeft = 0f;
         _hasStarted = false;
         _hasEnded = true;
         ShowTimeLeft();
+        
         Invoke("ReturnToMainMenu", 10f);
     }
 
-    void ReturnToMainMenu(){
+    void ReturnToMainMenu()
+    {
         SceneManager.LoadScene("MainMenu");
     }
 
-    private void GenerateTestOrders()
+    private void FlipOrder(int index)
     {
-        _activeOrders[0] = GenerateOrderEmpty();
-        _activeOrders[1] = GenerateOrderFull();
-    }
-
-    private void InitializeOrders()
-    {
-        for (var i = 0; i < _activeOrders.Length; i++)
-        {
-            GenerateOrder(i);
-        }
-    }
-
-    private Order GenerateOrderEmpty()
-    {
-        return new Order(new[]
-        {
-            ITags.BottomBun,
-            ITags.TopBun
-        });
-    }
-
-    private Order GenerateOrderFull()
-    {
-        return new Order(new[]
-        {
-            ITags.BottomBun,
-            ITags.GrilledSteak,
-            ITags.Cheese,
-            ITags.TomatoSlice,
-            ITags.LettuceSlice,
-            ITags.TopBun
-        });
-    }
-
-    private void GenerateOrder(int forIndex)
-    {
-        var orderId = _random.Next(_possibleOrders.Length);
-        var order = _possibleOrders[orderId];
-        _activeOrders[forIndex] = order;
-        // Update order UI
-        displayedOrders[forIndex].GetComponent<Renderer>().material
-            = orderMaterials[orderId];
+        var newOrderId = _possibleOrders.Length - 1 -
+                         _activeOrderIds[index];
+        _activeOrderIds[index] = newOrderId;
+        orderDisplays[index].material = orderMaterials[newOrderId];
     }
 
     private int FindCompletedOrder(FoodDetector foodDetector)
     {
         // Check a served order against all received orders
         // if no match is found, show negative feedback 
-        for (var i = 0; i < _activeOrders.Length; i++)
+        for (var i = 0; i < _activeOrderIds.Length; i++)
         {
             if (IsCorrectOrder(foodDetector.BurgerIngredients(),
                     foodDetector.NumOfFries(), foodDetector.NumOfDrinks(),
-                    _activeOrders[i]))
+                    _possibleOrders[_activeOrderIds[i]]))
             {
                 return i;
             }

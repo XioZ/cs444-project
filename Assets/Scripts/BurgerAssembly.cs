@@ -15,12 +15,12 @@ using UnityEngine.Serialization;
 // TODO refactor & annotate with comments 
 public class BurgerAssembly : MonoBehaviour
 {
-    // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into ingredientPrefabs list
+    // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into Inspector
     // "BottomBun", "GrilledSteak", "Cheese", "TomatoSlice", "LettuceSlice", "TopBun"
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
-    [FormerlySerializedAs("burgerBase")] public BoxCollider baseCollider;
+    public BoxCollider baseCollider;
     public AudioClip errorSound;
 
     private AudioSource _audioSource;
