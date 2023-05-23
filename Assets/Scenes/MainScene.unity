@@ -20315,10 +20315,10 @@ MonoBehaviour:
   cutWith: {fileID: 1662673518}
   cutInto: {fileID: 8643169627568067659, guid: eeb30a990e992184dad77ad9a8592509, type: 3}
   trashPrefab: {fileID: 4534178119022131507, guid: 7de8506c35ef04beea9339e44ba4d276, type: 3}
-  cutAudioClip: {fileID: 8300000, guid: b99da9a57308d4ba1bee1cf1d9038376, type: 3}
-  cutTooLightAudioClip: {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
-  cutTooHardAudioClip: {fileID: 8300000, guid: 84e427d6b66ab4066b6a4dcd0ce819ee, type: 3}
-  destroyAudioCilp: {fileID: 8300000, guid: 2667a0a008b044e218b63df62e2be749, type: 3}
+  cutAudioClip: {fileID: 8300000, guid: 99fed9bee37eb4307ab36cae98717bb3, type: 3}
+  cutTooLightAudioClip: {fileID: 8300000, guid: aefc4385a77874dc4b37332926c2878a, type: 3}
+  cutTooHardAudioClip: {fileID: 8300000, guid: 8bab4e3c7f3454ed5aac953ab49206fd, type: 3}
+  destroyAudioCilp: {fileID: 8300000, guid: 357e5b950be0a4a60becab974c4fd1a1, type: 3}
   cutLimit: 8
 --- !u!82 &1159621585
 AudioSource:
@@ -24229,7 +24229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sizzlingSound: {fileID: 1831546328}
   tickingSound: {fileID: 8300000, guid: 04d1b4f19e27a4f47b1f5a70066e6329, type: 3}
-  cookedSteakPrefab: {fileID: 1000012081886716, guid: 0b2c2c6617d3fb54ab69e7ff4da40867, type: 3}
+  cookedSteakPrefab: {fileID: 1765776769256630936, guid: 20cffc7df6ee94e2d9dfe656e35db689, type: 3}
   doneSound: {fileID: 8300000, guid: ba146ec3de2506d44a6e6d8329f5892c, type: 3}
   progressBarPrefab: {fileID: 94174664}
 --- !u!114 &1371665482

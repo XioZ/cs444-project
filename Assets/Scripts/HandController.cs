@@ -51,8 +51,14 @@ public class HandController : MonoBehaviour {
 
 
 	protected Vector3 get_velocity(){ 
-		Vector3 throw_velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
-		Debug.Log(" get_velocity() {0} {1} " + throw_velocity); 
+		Vector3 throw_velocity = Vector3.zero; 
+		if (handType == HandType.LeftHand)
+			throw_velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
+		else if (handType == HandType.RightHand){
+			throw_velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
+		}
+		Debug.Log(" get_velocity() {0} " + throw_velocity); 
+		Debug.Log(" get_velocity() world {1} " + transform.TransformDirection(throw_velocity));
 		return throw_velocity;
 	}
 
@@ -169,22 +175,22 @@ public class HandController : MonoBehaviour {
 		} else if ( object_grasped != null ) {
 			// Log the release
 			Debug.LogFormat("{0} released {1}", this.transform.parent.name, object_grasped.name);
-            Vector3 linearVelocity = transform.TransformDirection(get_velocity());
+            Vector3 linearVelocity = get_velocity();
 
-            // Release the object
-            object_grasped.detach_from( this, linearVelocity);
+			object_grasped.detach_from( this, linearVelocity);
+			Debug.Log(" hand releasing velocity " + linearVelocity );
+			Vector3 acceleration = OVRInput.GetLocalControllerAcceleration(OVRInput.Controller.RTouch);
+			Debug.Log(" hand releasing acceleration {0}" + acceleration);
+			object_grasped.throw_to(acceleration);
+
+            // Magnetic Stuff 
 			MagneticGrab magneticGrab = object_grasped.GetComponent<MagneticGrab>();
 			if (magneticGrab != null ) { 
 				magneticGrab.ResetHighlight();
 				lineRenderer.enabled = false;
 				magneticGrab.enabled = false;
                 
-            }
-            // Move the object -- yiyuan
-            // print_velocity();
-            object_grasped.throw_to(linearVelocity);
-            //object_grasped.detach_from(this);
-            // print speed when throwing
+            } 
             Debug.Log("hand releasing thrown supposedly ");
 			
 		}
