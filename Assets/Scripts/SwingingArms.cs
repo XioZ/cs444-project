@@ -26,7 +26,8 @@ public class SwingingArms : MonoBehaviour
         if (centerEyeAnchor == null || forwardDirection == null ||
             leftHand == null || rightHand == null)
         {
-            Debug.LogErrorFormat("Required fields cannot be null (check Unity Editor)");
+            Debug.LogErrorFormat(
+                "Required fields cannot be null (check Unity Editor)");
             return;
         }
 
@@ -40,7 +41,8 @@ public class SwingingArms : MonoBehaviour
     {
         // set forward direction around y-axis based on where camera/player is looking
         float yRotation = centerEyeAnchor.transform.eulerAngles.y;
-        forwardDirection.transform.rotation = Quaternion.AngleAxis(yRotation, Vector3.up);
+        forwardDirection.transform.rotation =
+            Quaternion.AngleAxis(yRotation, Vector3.up);
 
         // update current positions
         _currentPlayerPosition = transform.position;
@@ -51,17 +53,21 @@ public class SwingingArms : MonoBehaviour
         var playerDistance =
             Vector3.Distance(_currentPlayerPosition, _previousPlayerPosition);
         var leftHandDistance =
-            Vector3.Distance(_currentLeftHandPosition, _previousLeftHandPosition)
+            Vector3.Distance(_currentLeftHandPosition,
+                _previousLeftHandPosition)
             - playerDistance;
         var rightHandDistance =
-            Vector3.Distance(_currentRightHandPosition, _previousRightHandPosition)
+            Vector3.Distance(_currentRightHandPosition,
+                _previousRightHandPosition)
             - playerDistance;
         _handSpeed = leftHandDistance + rightHandDistance;
 
         // update player/camera position when scene is loaded & both triggers are pressed down
         if (Time.timeSinceLevelLoad > 1f &&
             OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger) > 0.5
-            && OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger) > 0.5)
+            && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.5
+            && OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger) > 0.5
+            && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.5)
         {
             var direction = -forwardDirection.transform.forward;
             var distance = _handSpeed * speedup * Time.deltaTime;
