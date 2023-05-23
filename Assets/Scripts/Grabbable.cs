@@ -27,7 +27,11 @@ public class Grabbable : MonoBehaviour
         _initialTransformParent = transform.parent;
         _rigidbody = GetComponent<Rigidbody>();
         _hasRigidBody = _rigidbody != null;
+    }
 
+    void Update()
+    {
+        Debug.Log("grabbale update speed {0} " + _rigidbody.velocity);
     }
 
     // todo refactor & clean up: move/initialize expensive calls in Start(); comment/remove logs after done testing 
@@ -47,7 +51,7 @@ public class Grabbable : MonoBehaviour
         // Move the object to the given position
         if (this.GetComponent<Rigidbody>() != null) {
             this.GetComponent<Rigidbody>().isKinematic = false; 
-            this.GetComponent<Rigidbody>().AddForce(linearVelocity, ForceMode.Force);
+            this.GetComponent<Rigidbody>().velocity = linearVelocity;
 
         Debug.Log("thrown already" );
         }
@@ -123,6 +127,7 @@ public class Grabbable : MonoBehaviour
         // No longer a kinematic Rigidbody after 1st grab
         // i.e. grabbable objects start to have collision effect & physics-based motion
         // after being moved away from initial position in scene
+        Debug.Log("detach_from {0}" + linearVelocity);
         if (_hasRigidBody)
         {
             _rigidbody.isKinematic = false;

@@ -177,11 +177,11 @@ public class HandController : MonoBehaviour {
 			Debug.LogFormat("{0} released {1}", this.transform.parent.name, object_grasped.name);
             Vector3 linearVelocity = get_velocity();
 
-			object_grasped.detach_from( this, linearVelocity);
+			object_grasped.detach_from(this, linearVelocity);
 			Debug.Log(" hand releasing velocity " + linearVelocity );
 			Vector3 acceleration = OVRInput.GetLocalControllerAcceleration(OVRInput.Controller.RTouch);
 			Debug.Log(" hand releasing acceleration {0}" + acceleration);
-			object_grasped.throw_to(acceleration);
+			// object_grasped.throw_to(linearVelocity);
 
             // Magnetic Stuff 
 			MagneticGrab magneticGrab = object_grasped.GetComponent<MagneticGrab>();
