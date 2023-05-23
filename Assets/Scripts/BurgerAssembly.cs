@@ -32,17 +32,17 @@ public class BurgerAssembly : MonoBehaviour
     private GameObject _ingredientPrefab;
     private bool _isIngredient;
 
-    private List<BoxCollider> _progress = new();
+    private List<BoxCollider> _stackedColliders = new();
 
     public string[] BurgerIngredients()
     {
-        return _progress.Select(i => i.tag).ToArray();
+        return _stackedColliders.Select(i => i.tag).ToArray();
     }
 
     public void ClearIngredients()
     {
-        _progress.ForEach(Destroy);
-        _progress = new List<BoxCollider>();
+        _stackedColliders.ForEach(_ => Destroy(_.gameObject));
+        _stackedColliders = new List<BoxCollider>();
     }
 
     private void Start()
@@ -88,7 +88,7 @@ public class BurgerAssembly : MonoBehaviour
         else
         {
             // Position this ingredient relative to the last one 
-            var prevCollider = _progress.Any() ? _progress[^1] : baseCollider;
+            var prevCollider = _stackedColliders.Any() ? _stackedColliders[^1] : baseCollider;
             var prevBounds = prevCollider.bounds;
             var position = prevBounds.center +
                            new Vector3(0, prevBounds.size.y / 2, 0);
@@ -100,7 +100,7 @@ public class BurgerAssembly : MonoBehaviour
             // Make ingredients move together as a burger
             stackedIngredient.transform.SetParent(baseCollider.transform);
 
-            _progress.Add(stackedIngredient.GetComponent<BoxCollider>());
+            _stackedColliders.Add(stackedIngredient.GetComponent<BoxCollider>());
         }
 
         // Reset for next object

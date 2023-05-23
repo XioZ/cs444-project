@@ -7139,7 +7139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504105814759658492, guid: ce8fe15fe218b10459d08e5bd9dbc628, type: 3}
       propertyPath: m_TagString
-      value: BurgerBox
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4259767628755154853, guid: ce8fe15fe218b10459d08e5bd9dbc628, type: 3}
@@ -7644,7 +7644,7 @@ GameObject:
   - component: {fileID: 500903797}
   m_Layer: 0
   m_Name: Burger
-  m_TagString: Untagged
+  m_TagString: BurgerBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17632,7 +17632,7 @@ GameObject:
   - component: {fileID: 1022519009}
   - component: {fileID: 1022519008}
   m_Layer: 0
-  m_Name: Tray1
+  m_Name: FoodTray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
