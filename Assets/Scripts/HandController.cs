@@ -57,9 +57,10 @@ public class HandController : MonoBehaviour {
 		else if (handType == HandType.RightHand){
 			throw_velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
 		}
+		Vector3 throw_velocity_world = transform.TransformDirection(throw_velocity);
 		Debug.Log(" get_velocity() {0} " + throw_velocity); 
 		Debug.Log(" get_velocity() world {1} " + transform.TransformDirection(throw_velocity));
-		return throw_velocity;
+		return throw_velocity_world;
 	}
 
 	// Automatically called at each frame
@@ -165,8 +166,6 @@ public class HandController : MonoBehaviour {
 				Debug.LogFormat( "{0} grasped {1}", this.transform.parent.name, object_grasped.name );
 
                 object_grasped.attach_to(this);
-                
-
 
             }
 		//==============================================//
@@ -179,8 +178,8 @@ public class HandController : MonoBehaviour {
 
 			object_grasped.detach_from(this, linearVelocity);
 			Debug.Log(" hand releasing velocity " + linearVelocity );
-			Vector3 acceleration = OVRInput.GetLocalControllerAcceleration(OVRInput.Controller.RTouch);
-			Debug.Log(" hand releasing acceleration {0}" + acceleration);
+			// Vector3 acceleration = OVRInput.GetLocalControllerAcceleration(OVRInput.Controller.RTouch);
+			// Debug.Log(" hand releasing acceleration {0}" + acceleration);
 			// object_grasped.throw_to(linearVelocity);
 
             // Magnetic Stuff 
@@ -191,8 +190,7 @@ public class HandController : MonoBehaviour {
 				magneticGrab.enabled = false;
                 
             } 
-            Debug.Log("hand releasing thrown supposedly ");
-			
+			object_grasped = null;
 		}
 	}
 }
