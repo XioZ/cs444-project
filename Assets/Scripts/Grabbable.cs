@@ -27,7 +27,11 @@ public class Grabbable : MonoBehaviour
         _initialTransformParent = transform.parent;
         _rigidbody = GetComponent<Rigidbody>();
         _hasRigidBody = _rigidbody != null;
+    }
 
+    void Update()
+    {
+        Debug.Log("grabbale update speed {0} " + _rigidbody.velocity);
     }
 
     // todo refactor & clean up: move/initialize expensive calls in Start(); comment/remove logs after done testing 
@@ -35,26 +39,21 @@ public class Grabbable : MonoBehaviour
         Vector3 zeroforce = new Vector3 (0,0,0);
         this.GetComponent<Rigidbody>().AddForce(zeroforce); 
         this.GetComponent<Rigidbody>().isKinematic = true;
-        Debug.Log("Inside stop moving "); 
         transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
         transform.SetParent( trashcan.transform );
-        Debug.Log("successfully set parent "); 
         transform.localPosition = new Vector3(0, 0.3F, 0);
-        Debug.Log("stop moving parent is " + transform.parent.ToString()); 
-        Debug.Log("current position is " + transform.position.ToString() );
-        Debug.Log("current local position is " + transform.localPosition.ToString() );
     }
 
     public void throw_to ( Vector3 linearVelocity) {
         // Make sure that the object is not attached to a hand controller
         if ( _handController != null ) return;
-        Debug.Log("inside throw_to () " + linearVelocity.ToString() ); 
+        Debug.Log("inside throw_to {0}" + linearVelocity); 
         // Move the object to the given position
         if (this.GetComponent<Rigidbody>() != null) {
             this.GetComponent<Rigidbody>().isKinematic = false; 
-            this.GetComponent<Rigidbody>().AddForce(linearVelocity, ForceMode.Impulse);
+            this.GetComponent<Rigidbody>().velocity = linearVelocity;
 
-            Debug.Log("thrown already" );
+        Debug.Log("thrown already" );
         }
     }
     public bool HasBeenGrabbed { get; private set; }
@@ -128,6 +127,7 @@ public class Grabbable : MonoBehaviour
         // No longer a kinematic Rigidbody after 1st grab
         // i.e. grabbable objects start to have collision effect & physics-based motion
         // after being moved away from initial position in scene
+        Debug.Log("detach_from {0}" + linearVelocity);
         if (_hasRigidBody)
         {
             _rigidbody.isKinematic = false;

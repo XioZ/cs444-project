@@ -39,7 +39,7 @@ public class Cuttable : MonoBehaviour
     void OnCollisionEnter(Collision collision ){
         if (collision.gameObject.tag == ITags.Knife){
             Debug.Log("collision enter {0} {1}" + gameObject.name + gameObject.tag);
-            if (collision.impulse.magnitude > 0.2 && collision.impulse.y < 0) {
+            if (collision.impulse.magnitude > 0.1 && collision.impulse.y < 0) {
                 hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
                 hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
                 cutCount += 1; 
@@ -56,11 +56,10 @@ public class Cuttable : MonoBehaviour
                     // destroy the object
                     gameObject.SetActive(false); 
                 }
-            } else if (collision.impulse.magnitude > 5 && collision.impulse.y < 0){
-                Debug.Log("______________FORCE TOO HARD ");
+            } else if (collision.impulse.magnitude > 2 && collision.impulse.y < 0){
                 audioSource.PlayOneShot(cutTooHardAudioClip);
-                hapticModule.GetComponent<HapticFeedback>().RightShortVibration();
-                hapticModule.GetComponent<HapticFeedback>().LeftShortVibration();
+                hapticModule.GetComponent<HapticFeedback>().RightLongVibration();
+                hapticModule.GetComponent<HapticFeedback>().LeftLongVibration();
                 Instantiate(trashPrefab, transform.position, transform.rotation);
                 gameObject.SetActive(false); 
             } else {
@@ -70,8 +69,6 @@ public class Cuttable : MonoBehaviour
 
             Debug.Log(" ==== Cutting Speed {0} {1}"  + collision.gameObject.tag + collision.relativeVelocity);
             Debug.Log(" #### Impulse {0} {1}"  + collision.impulse);
-
-            
             
         }
     }

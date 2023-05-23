@@ -94,10 +94,7 @@ public class TutorialScript : MonoBehaviour
                 // TEMP this will send user to main scene
                 Step4Magnetic();
                 break;
-            // case 5: 
-            //     Step5Assemble();
-            //     break;
-
+            
             default: 
                 break;
         }
@@ -128,14 +125,8 @@ public class TutorialScript : MonoBehaviour
     private GameObject[] tomatoObjects;
     public AudioClip Step2Sound; // grill steak instruction
     public GameObject RawSteak; 
-    public GameObject GrilledSteak; 
-     public AudioClip correctSound;
-    void Helper(){
-        Debug.Log("inside helper function");
-        audioSource.PlayOneShot(correctSound); // supposed to be tomato
-        Instantiate(GrilledSteak, gameObject.transform.position, gameObject.transform.rotation);
-    }
-    
+    public AudioClip correctSound;
+ 
     public void Step2Cut (){
         tomatoObjects = GameObject.FindGameObjectsWithTag("TomatoSlice");
         if (tomatoObjects.Length > 0){
@@ -143,42 +134,44 @@ public class TutorialScript : MonoBehaviour
             audioSource.Stop();
             audioSource.PlayOneShot(Step2Sound); // supposed to be tomato
             statusStep += 1; 
-            Invoke("Helper", 3.0f);
         }
     }
 
     public AudioClip Step3Sound; // grab bun audio 
     private GameObject[] steakObjects;
     public GameObject BottomBun;
+    private bool helperFlag = false; 
     public void Step3Steak () {
         steakObjects = GameObject.FindGameObjectsWithTag("GrilledSteak");
-        Debug.Log("steakObjects {0} tag" + GameObject.FindGameObjectsWithTag("GrilledSteak").Length);  
-        Debug.Log("steakObjects {0} name" + GameObject.Find("Cooked_Steak").name);      
-        Debug.Log("steakObjects {0} name" + GameObject.Find("Cooked_Steak(Clone)").name);      
-        if (steakObjects.Length > 0){
+        Debug.Log("Steak length is " + steakObjects.Length); 
+        if (steakObjects.Length != 0){ // jumping through
             _pointToObject = BottomBun;
             audioSource.Stop();
             audioSource.PlayOneShot(Step3Sound); // supposed to be tomato
             statusStep += 1; 
         }
+        
     }
     
-   
-
-
-    public AudioClip Step4Sound;  // look at the tray audio 
+    public AudioClip Step4Sound;  // assemble burger audio 
     private GameObject[] BottomBuns; 
     private GameObject Tray1;
     public void Step4Magnetic () {
         BottomBuns = GameObject.FindGameObjectsWithTag("BottomBun");
         Debug.Log("BottomBuns length is " + BottomBuns.Length);
-        if (BottomBuns.Length >1  ){
+        if (BottomBuns.Length > 2 ){
             Tray1= GameObject.Find("Tray1");
             _pointToObject = Tray1;
             audioSource.Stop();
-            audioSource.PlayOneShot(Step4Sound); // 
-            SceneManager.LoadScene("MainScene");
+            audioSource.PlayOneShot(Step4Sound); 
+            statusStep += 1;
+            Invoke("GoToMainGame", 5.0f); 
         }
+    }
+
+    void GoToMainGame(){
+        Debug.Log("Go to main game function");
+        SceneManager.LoadScene("MainScene");
     }
 
     public AudioClip Step5Sound; // locomotion audio 
