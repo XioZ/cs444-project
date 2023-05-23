@@ -87,13 +87,12 @@ public class TutorialScript : MonoBehaviour
                 break;
             case 3: 
                 // show the grill, check if patty is on the grill 
-                Step4Magnetic();
-                // Step3Steak();
+                Step3Steak();
                 break;
             case 4:
                 // show the magnetic grab, check if patty is on the grill 
                 // TEMP this will send user to main scene
-                //Step4Magnetic();
+                Step4Magnetic();
                 break;
             
             default: 
@@ -126,7 +125,6 @@ public class TutorialScript : MonoBehaviour
     private GameObject[] tomatoObjects;
     public AudioClip Step2Sound; // grill steak instruction
     public GameObject RawSteak; 
-    public GameObject GrilledSteak; 
     public AudioClip correctSound;
  
     public void Step2Cut (){
@@ -134,7 +132,7 @@ public class TutorialScript : MonoBehaviour
         if (tomatoObjects.Length > 0){
             _pointToObject = RawSteak;
             audioSource.Stop();
-            audioSource.PlayOneShot(Step3Sound); // supposed to be tomato
+            audioSource.PlayOneShot(Step2Sound); // supposed to be tomato
             statusStep += 1; 
         }
     }
@@ -146,7 +144,7 @@ public class TutorialScript : MonoBehaviour
     public void Step3Steak () {
         steakObjects = GameObject.FindGameObjectsWithTag("GrilledSteak");
         Debug.Log("Steak length is " + steakObjects.Length); 
-        if (steakObjects.Length != null){ // jumping through
+        if (steakObjects.Length != 0){ // jumping through
             _pointToObject = BottomBun;
             audioSource.Stop();
             audioSource.PlayOneShot(Step3Sound); // supposed to be tomato
@@ -155,7 +153,7 @@ public class TutorialScript : MonoBehaviour
         
     }
     
-    public AudioClip Step4Sound;  // look at the tray audio 
+    public AudioClip Step4Sound;  // assemble burger audio 
     private GameObject[] BottomBuns; 
     private GameObject Tray1;
     public void Step4Magnetic () {
@@ -167,11 +165,12 @@ public class TutorialScript : MonoBehaviour
             audioSource.Stop();
             audioSource.PlayOneShot(Step4Sound); 
             statusStep += 1;
-            Invoke("GoToMainGame", 16.0f)
+            Invoke("GoToMainGame", 5.0f); 
         }
     }
 
     void GoToMainGame(){
+        Debug.Log("Go to main game function");
         SceneManager.LoadScene("MainScene");
     }
 
