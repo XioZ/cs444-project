@@ -96,17 +96,18 @@ public class Grabbable : MonoBehaviour
        
     }
 
-    public void detach_from(HandController handController, Vector3 linearVelocity)
+    public void detach_from(HandController handController, Vector3 linearVelocity, Vector3 angularVelocity)
     {
         // No longer a kinematic Rigidbody after 1st grab
         // i.e. grabbable objects start to have collision effect & physics-based motion
         // after being moved away from initial position in scene
         Debug.Log("detach_from {0}" + linearVelocity);
-        //if (_hasRigidBody)
-        //{
+        if (_hasRigidBody)
+        {
             _rigidbody.isKinematic = false;
             _rigidbody.velocity = linearVelocity ;
-        //}
+            _rigidbody.angularVelocity = angularVelocity;
+        }
 
         HasBeenGrabbed = false;
         if (regenerates)
