@@ -19,19 +19,19 @@ public class BurgerAssembly : MonoBehaviour
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
-    public GameObject burgerBase;
+    public BoxCollider burgerBase;
     public AudioClip errorSound;
 
     private AudioSource _audioSource;
 
-    private bool _isInSnapZone;
-    private GameObject _itemInZone;
-    private Grabbable _itemGrabbable;
+    private bool _hasCollider;
+    private Collider _collider;
+    private Grabbable _colliderGrabbable;
     private bool _hasGrabbable;
     private GameObject _ingredientPrefab;
     private bool _isIngredient;
 
-    private List<GameObject> _progress = new();
+    private List<BoxCollider> _progress = new();
 
     public string[] BurgerIngredients()
     {
@@ -41,7 +41,7 @@ public class BurgerAssembly : MonoBehaviour
     public void ClearIngredients()
     {
         _progress.ForEach(Destroy);
-        _progress = new List<GameObject>();
+        _progress = new List<BoxCollider>();
     }
 
     private void Start()
@@ -51,20 +51,20 @@ public class BurgerAssembly : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _isInSnapZone = true;
+        _hasCollider = true;
         _ingredientPrefab = ingredientPrefabs.Find(prefab
             => prefab.CompareTag(other.tag));
         _isIngredient = _ingredientPrefab != null;
-        _itemInZone = other.gameObject;
-        _itemGrabbable = _itemInZone.GetComponent<Grabbable>();
-        _hasGrabbable = _itemGrabbable != null;
+        _collider = other;
+        _colliderGrabbable = _collider.GetComponent<Grabbable>();
+        _hasGrabbable = _colliderGrabbable != null;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (ReferenceEquals(other.gameObject, _itemInZone))
+        if (ReferenceEquals(other, _collider))
         {
-            _isInSnapZone = false;
+            _hasCollider = false;
         }
     }
 
@@ -75,8 +75,8 @@ public class BurgerAssembly : MonoBehaviour
 
     private void Stack()
     {
-        if (!_isInSnapZone || !_hasGrabbable ||
-            !_itemGrabbable.is_available()) return;
+        if (!_hasCollider || !_hasGrabbable ||
+            !_colliderGrabbable.is_available()) return;
 
         if (!_isIngredient)
         {
@@ -87,20 +87,19 @@ public class BurgerAssembly : MonoBehaviour
             // Position this ingredient relative to the last one 
             var prevIngredient =
                 _progress.Any() ? _progress[^1] : burgerBase;
-            var dimension =
-                prevIngredient.GetComponent<BoxCollider>().bounds;
-            var position = dimension.center +
-                           new Vector3(0, dimension.size.y / 2 + 0.005f, 0);
-            Destroy(_itemInZone);
+            var prevBounds = prevIngredient.bounds;
+            var deltaY = (prevBounds.size.y + _collider.bounds.size.y) / 2;
+            var position = prevBounds.center + new Vector3(0, deltaY, 0);
+            Destroy(_collider);
             var stackedIngredient = Instantiate(_ingredientPrefab,
                 position, _ingredientPrefab.transform.rotation);
             // Make ingredients move together as a burger
             stackedIngredient.transform.SetParent(burgerBase.transform);
 
-            _progress.Add(stackedIngredient);
+            _progress.Add(stackedIngredient.GetComponent<BoxCollider>());
         }
 
         // Reset for next object
-        _isInSnapZone = false;
+        _hasCollider = false;
     }
 }

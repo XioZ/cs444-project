@@ -37,7 +37,11 @@ public class GameManager : MonoBehaviour
 
     public void VerifyOrder(FoodDetector foodDetector)
     {
-        if (!_hasStarted || _hasEnded) return;
+        if (!_hasStarted || _hasEnded)
+        {
+            _audioSource.PlayOneShot(timeUpSound);
+            return;
+        }
 
         var completedOrder = FindCompletedOrder(foodDetector);
         if (completedOrder != -1)
