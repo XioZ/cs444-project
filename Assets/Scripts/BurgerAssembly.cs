@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /**
  * Stacks ingredients player places in the burger box into a burger
@@ -19,7 +20,7 @@ public class BurgerAssembly : MonoBehaviour
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
-    public BoxCollider burgerBase;
+    [FormerlySerializedAs("burgerBase")] public BoxCollider baseCollider;
     public AudioClip errorSound;
 
     private AudioSource _audioSource;
@@ -51,6 +52,8 @@ public class BurgerAssembly : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag(ITags.Tray)) return;
+
         _hasCollider = true;
         _ingredientPrefab = ingredientPrefabs.Find(prefab
             => prefab.CompareTag(other.tag));
@@ -85,16 +88,17 @@ public class BurgerAssembly : MonoBehaviour
         else
         {
             // Position this ingredient relative to the last one 
-            var prevIngredient =
-                _progress.Any() ? _progress[^1] : burgerBase;
-            var prevBounds = prevIngredient.bounds;
-            var deltaY = (prevBounds.size.y + _collider.bounds.size.y) / 2;
-            var position = prevBounds.center + new Vector3(0, deltaY, 0);
-            Destroy(_collider);
+            var prevCollider = _progress.Any() ? _progress[^1] : baseCollider;
+            var prevBounds = prevCollider.bounds;
+            var position = prevBounds.center +
+                           new Vector3(0, prevBounds.size.y / 2, 0);
+
+            Destroy(_collider.gameObject);
             var stackedIngredient = Instantiate(_ingredientPrefab,
                 position, _ingredientPrefab.transform.rotation);
+
             // Make ingredients move together as a burger
-            stackedIngredient.transform.SetParent(burgerBase.transform);
+            stackedIngredient.transform.SetParent(baseCollider.transform);
 
             _progress.Add(stackedIngredient.GetComponent<BoxCollider>());
         }
