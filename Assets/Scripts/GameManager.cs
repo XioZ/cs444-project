@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = System.Random;
+using UnityEngine.SceneManagement;
+
 
 /**
  * Controls overall game flow
@@ -20,6 +22,8 @@ public class GameManager : MonoBehaviour
     public AudioClip timeUpSound;
     public int duration = 180;
     public GameObject hapticModule;
+    public AudioClip endSuccessSound;
+    public AudioClip endFailureSound;
 
     private readonly Order[] _receivedOrders = new Order[2]; // always 2 orders
     private bool _hasStarted;
@@ -117,13 +121,24 @@ public class GameManager : MonoBehaviour
         ShowTimeLeft();
     }
 
+
     private void EndGame()
     {
-        _audioSource.PlayOneShot(timeUpSound);
+        if (_revenue >= 40) {
+            _audioSource.PlayOneShot(endSuccessSound);
+        } else {
+            _audioSource.PlayOneShot(endFailureSound);
+        }
+        // _audioSource.PlayOneShot(timeUpSound);
         _timeLeft = 0f;
         _hasStarted = false;
         _hasEnded = true;
         ShowTimeLeft();
+        Invoke("ReturnToMainMenu", 10f);
+    }
+
+    void ReturnToMainMenu(){
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void GenerateTestOrders()
