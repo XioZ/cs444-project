@@ -167,19 +167,12 @@ public class TutorialScript : MonoBehaviour
             audioSource.Stop();
             audioSource.PlayOneShot(Step4Sound); 
             statusStep += 1;
+            Invoke("GoToMainGame", 16.0f)
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Inside trigger enter function statusStep is {0}" + statusStep);
-        if (statusStep >= 1 && statusStep < 4){ // limit the time when the user can quit 
-            Debug.Log("Go to main scene function inside");
-            SceneManager.LoadScene("MainMenu");
-        } else {
-            SceneManager.LoadScene("MainScene");
-        }   
-        
+    void GoToMainGame(){
+        SceneManager.LoadScene("MainScene");
     }
 
     public AudioClip Step5Sound; // locomotion audio 

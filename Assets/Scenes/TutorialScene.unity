@@ -17521,8 +17521,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b4cd69a2ef4decb7c7c854e36e85a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countdownText: {fileID: 0}
-  revenueText: {fileID: 0}
+  countdownText: {fileID: 1038219143}
+  revenueText: {fileID: 504774046}
   timeUpSound: {fileID: 8300000, guid: 3ca459b4ab892499ab539e8c8a6c6aac, type: 3}
   duration: 180
 --- !u!4 &1029045241
