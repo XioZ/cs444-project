@@ -8,7 +8,6 @@ TagManager:
   - MainButton
   - TutorialButton
   - Fries
-  - BurgerBase
   - FridgeDoor
   - TomatoSlice
   - Cheese
@@ -20,6 +19,7 @@ TagManager:
   - Trash
   - LettuceSlice
   - Drink
+  - BurgerBox
   - trashball
   - GrilledSteak
   layers:

@@ -5,14 +5,13 @@ using UnityEngine;
 
 /*
  *
- * TODO add tag for Drink
+ * TODO test food detector works to verify prepared order (one tray at a time)
  */
 public class FoodDetector : MonoBehaviour
 {
-    public BurgerAssembly burgerAssembly;
-
     private List<GameObject> _fries = new();
     private List<GameObject> _drinks = new();
+    private BurgerAssembly _burgerAssembly;
 
     public void Clear()
     {
@@ -22,7 +21,7 @@ public class FoodDetector : MonoBehaviour
         _drinks.ForEach(Destroy);
         _drinks = new List<GameObject>();
 
-        burgerAssembly.ClearIngredients();
+        _burgerAssembly.ClearIngredients();
     }
 
     public int NumOfFries()
@@ -37,7 +36,7 @@ public class FoodDetector : MonoBehaviour
 
     public string[] BurgerIngredients()
     {
-        return burgerAssembly.BurgerIngredients();
+        return _burgerAssembly.BurgerIngredients();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -50,6 +49,10 @@ public class FoodDetector : MonoBehaviour
         {
             _drinks.Add(other.gameObject);
         }
+        else if (other.CompareTag(ITags.BurgerBox))
+        {
+            _burgerAssembly = other.GetComponent<BurgerAssembly>();
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -61,6 +64,10 @@ public class FoodDetector : MonoBehaviour
         else if (other.CompareTag(ITags.Drink))
         {
             _drinks.Remove(other.gameObject);
+        }
+        else if (other.CompareTag(ITags.BurgerBox))
+        {
+            _burgerAssembly = null;
         }
     }
 }

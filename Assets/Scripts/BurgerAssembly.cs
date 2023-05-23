@@ -12,7 +12,6 @@ using UnityEngine;
  * to fulfill the received order
  */
 // TODO refactor & annotate with comments 
-// TODO debug tomato slice doesn't stack
 public class BurgerAssembly : MonoBehaviour
 {
     // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into ingredientPrefabs list
@@ -91,7 +90,7 @@ public class BurgerAssembly : MonoBehaviour
             var dimension =
                 prevIngredient.GetComponent<BoxCollider>().bounds;
             var position = dimension.center +
-                           new Vector3(0, dimension.size.y / 2, 0);
+                           new Vector3(0, dimension.size.y / 2 + 0.005f, 0);
             Destroy(_itemInZone);
             var stackedIngredient = Instantiate(_ingredientPrefab,
                 position, _ingredientPrefab.transform.rotation);

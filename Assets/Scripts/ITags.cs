@@ -9,6 +9,7 @@ public interface ITags
     
     const string Fries = "Fries";
     const string Drink = "Drink";
+    const string BurgerBox = "BurgerBox";
 
     const string Knife = "Knife";
     const string Pan = "Pan";
