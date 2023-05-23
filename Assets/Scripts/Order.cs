@@ -3,7 +3,8 @@ using JetBrains.Annotations;
 
 public class Order
 {
-    public Order([NotNull] string[] burger, bool hasDrink, bool hasFries)
+    public Order([NotNull] string[] burger, bool hasDrink = false,
+        bool hasFries = false)
     {
         BurgerIngredients =
             burger ?? throw new ArgumentNullException(nameof(burger));
