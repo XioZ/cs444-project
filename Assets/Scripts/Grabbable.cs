@@ -103,17 +103,22 @@ public class Grabbable : MonoBehaviour
 
     public void detach_from(HandController handController, Vector3 linearVelocity)
     {
+        // No longer a kinematic Rigidbody after 1st grab
+        // i.e. grabbable objects start to have collision effect & physics-based motion
+        // after being moved away from initial position in scene
+        Debug.Log("detach_from {0}" + linearVelocity);
+        //if (_hasRigidBody)
+        //{
+            _rigidbody.isKinematic = false;
+            _rigidbody.velocity = linearVelocity ;
+        //}
+
         HasBeenGrabbed = false;
         if (regenerates)
         {
             isRegenerating = false;
             //StartCoroutine(Regenerate());
-        }
-        MagneticGrab magneticGrab = transform.GetComponent<MagneticGrab>();
-        if (magneticGrab != null) { 
-            //magneticGrab.enabled = false;
-            //magneticGrab.GetComponent<LineRenderer>().enabled = false;
-        }
+        }       
         // Make sure that the right hand controller ask for the release
         if (_handController != handController) return;
 
@@ -123,16 +128,6 @@ public class Grabbable : MonoBehaviour
 
         // Set the object to be placed in the original transform parent
         transform.SetParent(_initialTransformParent);
-        
-        // No longer a kinematic Rigidbody after 1st grab
-        // i.e. grabbable objects start to have collision effect & physics-based motion
-        // after being moved away from initial position in scene
-        Debug.Log("detach_from {0}" + linearVelocity);
-        if (_hasRigidBody)
-        {
-            _rigidbody.isKinematic = false;
-            _rigidbody.velocity = linearVelocity;
-        }
 
     }
 

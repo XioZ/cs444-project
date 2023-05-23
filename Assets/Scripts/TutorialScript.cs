@@ -125,7 +125,6 @@ public class TutorialScript : MonoBehaviour
     private GameObject[] tomatoObjects;
     public AudioClip Step2Sound; // grill steak instruction
     public GameObject RawSteak; 
-    public AudioClip correctSound;
  
     public void Step2Cut (){
         tomatoObjects = GameObject.FindGameObjectsWithTag("TomatoSlice");
@@ -164,8 +163,8 @@ public class TutorialScript : MonoBehaviour
             _pointToObject = Tray1;
             audioSource.Stop();
             audioSource.PlayOneShot(Step4Sound); 
+            Invoke("GoToMainGame", 45.0f); 
             statusStep += 1;
-            Invoke("GoToMainGame", 5.0f); 
         }
     }
 
@@ -173,17 +172,6 @@ public class TutorialScript : MonoBehaviour
         Debug.Log("Go to main game function");
         SceneManager.LoadScene("MainScene");
     }
-
-    public AudioClip Step5Sound; // locomotion audio 
-    public void Step5Assemble () {
-        
-    }
-
-
-    public void Step7Locomotion(){
-        
-    }
-
 
     IEnumerator Wait(int seconds)
     {
