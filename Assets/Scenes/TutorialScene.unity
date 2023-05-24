@@ -17723,6 +17723,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orderDisplays: []
   orderMaterials: []
+  orderDisplays: []
+  orderMaterials: []
   countdownText: {fileID: 1038219143}
   revenueText: {fileID: 504774046}
   correctOrderSound: {fileID: 0}
@@ -18519,6 +18521,7 @@ MonoBehaviour:
   Step3Sound: {fileID: 8300000, guid: ac684fafdab31473ba8ab374d2b79d18, type: 3}
   BottomBun: {fileID: 1200768381}
   Step4Sound: {fileID: 8300000, guid: 24f5e229dcfb743f4a3ba321328ba394, type: 3}
+  GameManager: {fileID: 0}
 --- !u!65 &1065143198
 BoxCollider:
   m_ObjectHideFlags: 0

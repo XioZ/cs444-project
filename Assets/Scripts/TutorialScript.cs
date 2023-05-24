@@ -96,8 +96,7 @@ public class TutorialScript : MonoBehaviour
                 break;
             case 5: 
                 Step5Assembly();
-            
-            
+                break; 
             default: 
                 break;
         }
@@ -170,9 +169,25 @@ public class TutorialScript : MonoBehaviour
             statusStep += 1;
         }
     }
-
+    public GameObject[] BurgerBoxes; 
+    public GameObject Bell; 
+    public AudioClip Step5Sound;  // assemble burger audio
+    private string[] ingredients1; 
+    private string[] ingredients2;
     public void Step5Assembly() {
-        
+        statusStep += 1;
+        BurgerBoxes = GameObject.FindGameObjectsWithTag("BurgerBox");
+        ingredients1 = BurgerBoxes[0].GetComponent<BurgerAssembly>().BurgerIngredients();
+        Debug.Log("ingredients 1 is {0}"+  ingredients1)
+        ingredients2 = BurgerBoxes[1].GetComponent<BurgerAssembly>().BurgerIngredients();
+        Debug.Log("ingredients 1 is {0}"+  ingredients1)
+        if (ingredients1.Length >0 || ingredients2.Length >0){
+            _pointToObject = Bell; 
+            audioSource.Stop();
+            audioSource.PlayOneShot(Step4Sound); 
+            Invoke("GoToMainGame", 45.0f); 
+        }
+
     }
 
     void GoToMainGame(){
