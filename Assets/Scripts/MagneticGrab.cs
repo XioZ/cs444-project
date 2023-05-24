@@ -12,10 +12,20 @@ public class MagneticGrab : MonoBehaviour
     private Material _defaultMaterial;
     private MeshRenderer _renderer;
     private Rigidbody _rigidbody;
+    private Collider triggerCollider;
     
 
     void Start()
     {
+        Collider[] colliders = this.gameObject.GetComponents<Collider>();
+        foreach (Collider collider in colliders)
+        {
+            if (collider.isTrigger)
+            {
+                triggerCollider = collider;
+                break;
+            }
+        }
         _renderer = GetComponentInChildren<MeshRenderer>();
         IsHighlighted = false;
         _defaultMaterial = _renderer.material;
@@ -32,7 +42,7 @@ public class MagneticGrab : MonoBehaviour
     {
         Ray ray = new Ray(handController.transform.position, handController.transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit) && hit.transform == transform && hit.distance <= highlightDistance)
+        if (Physics.Raycast(ray, out hit) && hit.collider == triggerCollider && hit.distance <= highlightDistance)
         {
             _renderer.material = highlightedMaterial;
             IsHighlighted = true;
