@@ -21,6 +21,8 @@ public class FoodDetector : MonoBehaviour
         _drinks.ForEach(Destroy);
         _drinks = new List<GameObject>();
 
+        if (_burgerAssembly == null) return;
+        
         _burgerAssembly.ClearIngredients();
     }
 

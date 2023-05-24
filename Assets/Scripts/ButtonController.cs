@@ -4,15 +4,17 @@ using UnityEngine.Events;
 
 /**
  * Follow tutorial at https://www.youtube.com/watch?v=HFNzVMi5MSQ
- * 
+ *
+ * Fire an event when button is pressed
  */
 public class ButtonController : MonoBehaviour
 {
-    public float threshold = 0.5f;
+    public float threshold = 0.1f;
 
     private bool _isPressing;
     private Vector3 _startPosition;
     private ConfigurableJoint _joint;
+    private Rigidbody _rigidbody;
 
     public UnityEvent onPress;
 
@@ -20,6 +22,7 @@ public class ButtonController : MonoBehaviour
     {
         _startPosition = transform.localPosition;
         _joint = GetComponent<ConfigurableJoint>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update()
