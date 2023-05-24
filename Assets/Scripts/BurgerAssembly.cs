@@ -15,12 +15,12 @@ using UnityEngine.Serialization;
 // TODO refactor & annotate with comments 
 public class BurgerAssembly : MonoBehaviour
 {
-    // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into ingredientPrefabs list
+    // Prefabs need 1) same tag as _itemInZone 2) BoxCollider 3) rotated & scaled 4) dragged into Inspector
     // "BottomBun", "GrilledSteak", "Cheese", "TomatoSlice", "LettuceSlice", "TopBun"
     public List<GameObject> ingredientPrefabs;
 
     // Base position for stacking ingredients
-    [FormerlySerializedAs("burgerBase")] public BoxCollider baseCollider;
+    public BoxCollider baseCollider;
     public AudioClip errorSound;
 
     private AudioSource _audioSource;
@@ -88,19 +88,21 @@ public class BurgerAssembly : MonoBehaviour
         else
         {
             // Position this ingredient relative to the last one 
-            var prevCollider = _stackedColliders.Any() ? _stackedColliders[^1] : baseCollider;
-            var prevBounds = prevCollider.bounds;
-            var position = prevBounds.center +
-                           new Vector3(0, prevBounds.size.y / 2, 0);
+            var prevCollider = _stackedColliders.Any()
+                ? _stackedColliders[^1]
+                : baseCollider;
+            var prevColliderBounds = prevCollider.bounds;
+            var position = prevColliderBounds.center +
+                           new Vector3(0f, prevColliderBounds.size.y / 2f, 0f);
 
             Destroy(_collider.gameObject);
             var stackedIngredient = Instantiate(_ingredientPrefab,
                 position, _ingredientPrefab.transform.rotation);
-
             // Make ingredients move together as a burger
             stackedIngredient.transform.SetParent(baseCollider.transform);
 
-            _stackedColliders.Add(stackedIngredient.GetComponent<BoxCollider>());
+            var stackedCollider = stackedIngredient.GetComponent<BoxCollider>();
+            _stackedColliders.Add(stackedCollider);
         }
 
         // Reset for next object

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5509597291555456652}
   - component: {fileID: -2574430397489145463}
   m_Layer: 0
-  m_Name: newpattytest
+  m_Name: NewPatty
   m_TagString: GrilledSteak
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
