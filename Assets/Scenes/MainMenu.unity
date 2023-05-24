@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18027112, g: 0.22569141, b: 0.306913, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -633,6 +633,7 @@ GameObject:
   - component: {fileID: 317710992}
   - component: {fileID: 317710997}
   - component: {fileID: 317710996}
+  - component: {fileID: 317710998}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: TutorialButton
@@ -759,6 +760,29 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 1b68ffca77c4c6344af03830dbeca2ca, type: 2}
   highlightDistance: 100
   magneticForce: 10
+--- !u!136 &317710998
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317710991}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &365266558
 GameObject:
   m_ObjectHideFlags: 0
@@ -1012,6 +1036,7 @@ GameObject:
   - component: {fileID: 495224499}
   - component: {fileID: 495224504}
   - component: {fileID: 495224503}
+  - component: {fileID: 495224505}
   m_Layer: 0
   m_Name: Capsule (1)
   m_TagString: MainButton
@@ -1138,6 +1163,29 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 1b68ffca77c4c6344af03830dbeca2ca, type: 2}
   highlightDistance: 100
   magneticForce: 10
+--- !u!136 &495224505
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495224498}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &603854159
 GameObject:
   m_ObjectHideFlags: 0
