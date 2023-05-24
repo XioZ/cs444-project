@@ -94,6 +94,9 @@ public class TutorialScript : MonoBehaviour
                 // TEMP this will send user to main scene
                 Step4Magnetic();
                 break;
+            case 5: 
+                Step5Assembly();
+            
             
             default: 
                 break;
@@ -166,6 +169,10 @@ public class TutorialScript : MonoBehaviour
             Invoke("GoToMainGame", 45.0f); 
             statusStep += 1;
         }
+    }
+
+    public void Step5Assembly() {
+        
     }
 
     void GoToMainGame(){
