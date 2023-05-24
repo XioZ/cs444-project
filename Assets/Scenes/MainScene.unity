@@ -31338,6 +31338,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b4cd69a2ef4decb7c7c854e36e85a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderDisplays:
+  - {fileID: 1735517669}
+  - {fileID: 281015969}
+  orderMaterials:
+  - {fileID: 2100000, guid: 917494bef4b17cd41bb84eabd24624a6, type: 2}
+  - {fileID: 2100000, guid: b26bf199540564062a4c0b624907cfd0, type: 2}
   countdownText: {fileID: 1038219143}
   revenueText: {fileID: 504774046}
   correctOrderSound: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
