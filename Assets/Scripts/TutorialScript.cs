@@ -50,14 +50,14 @@ public class TutorialScript : MonoBehaviour
     private AudioSource audioSource; 
     public float arrowDistance = 0.5f; 
     private GameObject _pointToObject;
-    public GameObject recipe;
+    public GameObject order;
     public GameObject centerEyeAnchor;
     
     // Start is called before the first frame update
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        _pointToObject = recipe;
+        _pointToObject = order;
     }
 
     // Update is called once per frame
@@ -97,6 +97,7 @@ public class TutorialScript : MonoBehaviour
             case 5: 
                 Step5Assembly();
                 break; 
+
             default: 
                 break;
         }
@@ -105,13 +106,20 @@ public class TutorialScript : MonoBehaviour
 
     public AudioClip Step0Sound; 
     private GameObject door; 
-    // NOTE: the previous step is responsible for playing the instruction of the next step!
+    public GameObject fridge; 
+    private bool haveChangedArrow = false; 
     public void Step0Welcome () { 
         door = GameObject.Find("FreeRefrigerator_DoorBig");
         audioSource.PlayOneShot(Step0Sound);
         statusStep += 1; // supposed to play open fridge sound 
+        if (!haveChangedArrow){
+            haveChangedArrow = true;
+            Invoke("helperChangeArrow", 15.0f);
+        }
     }
-    
+    void helperChangeArrow() {
+        _pointToObject = fridge;
+    }
 
     public AudioClip Step1Sound; // cut tomato instruction 
     public GameObject CuttingBoard;
@@ -125,12 +133,14 @@ public class TutorialScript : MonoBehaviour
     }
 
     private GameObject[] tomatoObjects;
+    private GameObject[] lettuceSlices;
     public AudioClip Step2Sound; // grill steak instruction
     public GameObject RawSteak; 
  
     public void Step2Cut (){
         tomatoObjects = GameObject.FindGameObjectsWithTag("TomatoSlice");
-        if (tomatoObjects.Length > 0){
+        lettuceSlices = GameObject.FindGameObjectsWithTag("LettuceSlice");
+        if (tomatoObjects.Length > 0 && lettuceSlices.Length > 0){
             _pointToObject = RawSteak;
             audioSource.Stop();
             audioSource.PlayOneShot(Step2Sound); // supposed to be tomato
@@ -156,36 +166,31 @@ public class TutorialScript : MonoBehaviour
     
     public AudioClip Step4Sound;  // assemble burger audio 
     private GameObject[] BottomBuns; 
-    private GameObject Tray1;
+    public GameObject BurgerBox;
     public void Step4Magnetic () {
         BottomBuns = GameObject.FindGameObjectsWithTag("BottomBun");
-        Debug.Log("BottomBuns length is " + BottomBuns.Length);
         if (BottomBuns.Length > 2 ){
-            Tray1= GameObject.Find("Tray1");
-            _pointToObject = Tray1;
+            _pointToObject = BurgerBox;
             audioSource.Stop();
             audioSource.PlayOneShot(Step4Sound); 
-            Invoke("GoToMainGame", 45.0f); 
             statusStep += 1;
         }
     }
-    public GameObject[] BurgerBoxes; 
-    public GameObject Bell; 
+    private GameObject[] BurgerBoxes; 
+    public GameObject CollectionArea; 
     public AudioClip Step5Sound;  // assemble burger audio
     private string[] ingredients1; 
     private string[] ingredients2;
     public void Step5Assembly() {
-        statusStep += 1;
         BurgerBoxes = GameObject.FindGameObjectsWithTag("BurgerBox");
         ingredients1 = BurgerBoxes[0].GetComponent<BurgerAssembly>().BurgerIngredients();
-        Debug.Log("ingredients 1 is {0}"+  ingredients1)
         ingredients2 = BurgerBoxes[1].GetComponent<BurgerAssembly>().BurgerIngredients();
-        Debug.Log("ingredients 1 is {0}"+  ingredients1)
-        if (ingredients1.Length >0 || ingredients2.Length >0){
-            _pointToObject = Bell; 
+        if (ingredients1.Length > 0 || ingredients2.Length >0){
+            _pointToObject = CollectionArea; 
             audioSource.Stop();
-            audioSource.PlayOneShot(Step4Sound); 
-            Invoke("GoToMainGame", 45.0f); 
+            audioSource.PlayOneShot(Step5Sound); 
+            statusStep += 1;
+            Invoke("GoToMainGame", 48.0f); 
         }
 
     }

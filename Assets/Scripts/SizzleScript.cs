@@ -12,7 +12,7 @@ public class SteakSizzle : MonoBehaviour
     private AudioSource tickingAudioSource;
     private AudioSource doneAudioSource;
 
-    private float cookTime = 6f; // Time to cook steak in seconds
+    private float cookTime = 10f; // Time to cook steak in seconds
     private float cookProgress = 0f; // How much the steak has been cooked
     private bool isCooking = false;
 
